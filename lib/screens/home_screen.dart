@@ -39,10 +39,16 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Hello World',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-            ),
+            _imageFile == null
+                ? Text(
+                  'Upload an image',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+                )
+                : Text(
+                  "Food: Athu\nEstimated Calories: 800kcal\nProtein:12g\nCarbohydrate:35g\nFat: 9g ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+
             const SizedBox(height: 100),
             Center(
               child:
@@ -50,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? Image.file(_imageFile!, height: 470)
                       : SizedBox.shrink(),
             ),
+
             Spacer(),
             Align(
               alignment: Alignment.bottomCenter,
