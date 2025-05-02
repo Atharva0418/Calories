@@ -20,6 +20,7 @@ class NutritionProvider with ChangeNotifier {
       sugar: 20,
       carbohydrates: 50,
       protein: 12,
+      fat: 9,
     );
 
     notifyListeners();

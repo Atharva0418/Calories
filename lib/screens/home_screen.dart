@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:calories/providers/nutrition_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -35,9 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           'Calories',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
+          style: GoogleFonts.dynaPuff(
+            textStyle: TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.orangeAccent,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -45,28 +52,22 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               image != null
-                  ? Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      height: 450,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        image: DecorationImage(
-                          image: FileImage(image),
-                          fit: BoxFit.cover,
-                        ),
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black87,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                  ? Container(
+                    height: 450,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: DecorationImage(
+                        image: FileImage(image),
+                        fit: BoxFit.cover,
                       ),
+                      border: Border.all(color: Colors.orange, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black87,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
                   )
                   : Center(
@@ -78,19 +79,80 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 30),
 
               if (nutrition != null)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Food: ${nutrition.food}'),
-                    Text('Estimated Calories: ${nutrition.calories} kcal'),
-                    Text('Sugar: ${nutrition.sugar} g'),
-                    Text('Carbohydrates: ${nutrition.carbohydrates} g'),
-                    Text('Protein: ${nutrition.protein} g'),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Food: ${nutrition.food}',
+                        style: GoogleFonts.fredoka(
+                          textStyle: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Text(
+                      'Energy: ${nutrition.calories} kcal',
+                      style: GoogleFonts.fredoka(
+                        textStyle: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    Text(
+                      'Protein: ${nutrition.sugar} g',
+                      style: GoogleFonts.fredoka(
+                        textStyle: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    Text(
+                      'Fat: ${nutrition.fat} g',
+                      style: GoogleFonts.fredoka(
+                        textStyle: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    Text(
+                      'Carbohydrates: ${nutrition.carbohydrates} g',
+                      style: GoogleFonts.fredoka(
+                        textStyle: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    Text(
+                      'Sugar: ${nutrition.protein} g',
+                      style: GoogleFonts.fredoka(
+                        textStyle: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
+
+              const SizedBox(height: 30),
 
               ElevatedButton.icon(
                 onPressed: () => _pickImage(context),
