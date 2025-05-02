@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:calories/providers/nutrition_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,21 +13,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  File? _imageFile;
-
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(BuildContext context) async {
+    final provider = context.read<NutritionProvider>();
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
+      final imageFile = File(pickedFile.path);
+
+      provider.setImage(imageFile);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final nutritionProvider = context.watch<NutritionProvider>();
+    final image = nutritionProvider.imageFile;
+    final nutrition = nutritionProvider.nutritionInfo;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -34,43 +39,44 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _imageFile == null
-                ? Text(
-                  'Upload an image',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-                )
-                : Text(
-                  "Food: Athu\nEstimated Calories: 800kcal\nProtein:12g\nCarbohydrate:35g\nFat: 9g ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 100),
+              image != null
+                  ? Center(child: Image.file(image, height: 450))
+                  : Center(
+                    child: const Text(
+                      'Upload an image',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40,
+                      ),
+                    ),
+                  ),
+              const SizedBox(height: 20),
+
+              if (nutrition != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Food: ${nutrition.food}'),
+                    Text('Estimated Calories: ${nutrition.calories} kcal'),
+                    Text('Sugar: ${nutrition.sugar} g'),
+                    Text('Carbohydrates: ${nutrition.carbohydrates} g'),
+                    Text('Protein: ${nutrition.protein} g'),
+                  ],
                 ),
 
-            const SizedBox(height: 100),
-            Center(
-              child:
-                  _imageFile != null
-                      ? Image.file(_imageFile!, height: 470)
-                      : SizedBox.shrink(),
-            ),
-
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: _pickImage,
-                    icon: Icon(Icons.cloud),
-                    label: Text('Pick Image from Gallery'),
-                  ),
-                ],
+              ElevatedButton.icon(
+                onPressed: () => _pickImage(context),
+                icon: Icon(Icons.cloud),
+                label: Text('Pick Image from Gallery'),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
