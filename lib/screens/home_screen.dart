@@ -44,9 +44,31 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const SizedBox(height: 100),
               image != null
-                  ? Center(child: Image.file(image, height: 450))
+                  ? Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: 450,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        image: DecorationImage(
+                          image: FileImage(image),
+                          fit: BoxFit.cover,
+                        ),
+                        border: Border.all(
+                          color: Colors.grey.shade300,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black87,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                   : Center(
                     child: const Text(
                       'Upload an image',
