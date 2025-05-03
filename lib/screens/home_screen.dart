@@ -26,6 +26,36 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Widget _buildNutritionRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.fredoka(
+              textStyle: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+
+          Text(
+            value,
+            style: GoogleFonts.fredoka(
+              textStyle: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final nutritionProvider = context.watch<NutritionProvider>();
@@ -53,111 +83,110 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               image != null
                   ? Container(
-                    height: 450,
+                    height: 400,
+                    width: 400,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        image: FileImage(image),
-                        fit: BoxFit.cover,
-                      ),
                       border: Border.all(color: Colors.orange, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black87,
+                          color: Colors.deepOrange,
                           blurRadius: 10,
-                          offset: Offset(0, 4),
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.file(image, fit: BoxFit.cover),
                   )
                   : Center(
-                    child: const Text(
+                    child: Text(
                       'Upload an image',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40,
+                      style: GoogleFonts.fredoka(
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 40,
+                        ),
                       ),
                     ),
                   ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               if (nutrition != null)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Food: ${nutrition.food}',
-                        style: GoogleFonts.fredoka(
-                          textStyle: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.deepOrange.withValues(alpha: 0.5),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Card(
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    margin: const EdgeInsets.all(4),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            nutrition.food,
+                            style: GoogleFonts.fredoka(
+                              textStyle: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                          const SizedBox(height: 20),
 
-                    Text(
-                      'Energy: ${nutrition.calories} kcal',
-                      style: GoogleFonts.fredoka(
-                        textStyle: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                          // const Divider(thickness: 1, color: Colors.grey),
+                          _buildNutritionRow("Energy", "${nutrition.calories}"),
 
-                    Text(
-                      'Protein: ${nutrition.sugar} g',
-                      style: GoogleFonts.fredoka(
-                        textStyle: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                          const Divider(thickness: 1, color: Colors.grey),
 
-                    Text(
-                      'Fat: ${nutrition.fat} g',
-                      style: GoogleFonts.fredoka(
-                        textStyle: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                          _buildNutritionRow(
+                            "Protein",
+                            "${nutrition.protein} g",
+                          ),
 
-                    Text(
-                      'Carbohydrates: ${nutrition.carbohydrates} g',
-                      style: GoogleFonts.fredoka(
-                        textStyle: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                          const Divider(thickness: 1, color: Colors.grey),
 
-                    Text(
-                      'Sugar: ${nutrition.protein} g',
-                      style: GoogleFonts.fredoka(
-                        textStyle: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
+                          _buildNutritionRow("Fat", "${nutrition.fat} g"),
+
+                          const Divider(thickness: 1, color: Colors.grey),
+
+                          _buildNutritionRow(
+                            "Carbohydrates",
+                            "${nutrition.carbohydrates} g",
+                          ),
+
+                          const Divider(thickness: 1, color: Colors.grey),
+
+                          _buildNutritionRow("Sugar", "${nutrition.sugar} g"),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
 
               ElevatedButton.icon(
                 onPressed: () => _pickImage(context),
-                icon: Icon(Icons.cloud),
-                label: Text('Pick Image from Gallery'),
+                icon: Icon(Icons.cloud, color: Colors.blue),
+
+                label: Text(
+                  'Pick Image from Gallery',
+                  style: GoogleFonts.fredoka(
+                    textStyle: const TextStyle(color: Colors.black),
+                  ),
+                ),
               ),
             ],
           ),
