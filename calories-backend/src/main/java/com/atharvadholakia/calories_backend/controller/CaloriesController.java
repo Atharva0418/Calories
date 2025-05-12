@@ -1,7 +1,11 @@
 package com.atharvadholakia.calories_backend.controller;
 
 import com.atharvadholakia.calories_backend.data.Nutrition;
+import com.atharvadholakia.calories_backend.exceptions.InvalidImageException;
 import com.atharvadholakia.calories_backend.exceptions.ResourceNotFoundException;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,10 +17,20 @@ import org.springframework.web.multipart.MultipartFile;
 public class CaloriesController {
 
   @PostMapping("/food/calories")
-  public ResponseEntity<Nutrition> getNutrition(@RequestParam MultipartFile file) {
+  public ResponseEntity<Nutrition> getNutrition(@RequestParam() MultipartFile image) {
 
-    if (file.isEmpty()) {
-      throw new ResourceNotFoundException("Error: Image not found!");
+    if (image.isEmpty()) {
+      throw new ResourceNotFoundException("Image not found!");
+    } else {
+      try {
+        BufferedImage img = ImageIO.read(image.getInputStream());
+        if (img == null) {
+          throw new ResourceNotFoundException("Only image files(jpg, png, jpeg) are allowed");
+        }
+
+      } catch (IOException e) {
+        throw new InvalidImageException("Failed to read the image file.");
+      }
     }
 
     Nutrition nutrition = new Nutrition();
