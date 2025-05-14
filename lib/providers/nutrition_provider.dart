@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:calories/models/nutrition_info.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
 class NutritionProvider with ChangeNotifier {
   File? _imageFile;
@@ -24,6 +26,26 @@ class NutritionProvider with ChangeNotifier {
     );
 
     notifyListeners();
+  }
+
+  Future<void> uploadImage() async {
+    if (_imageFile == null) return;
+
+    try {
+      final uri = Uri.parse('http://10.0.2.2:8080/food/calories');
+      final request = http.MultipartRequest('POST', uri)
+        ..files.add(
+          await http.MultipartFile.fromPath(
+            'image',
+            _imageFile!.path,
+            filename: basename(_imageFile!.path),
+          ),
+        );
+
+      final response = await request.send();
+    } catch (e) {
+      debugPrint('Upload error: $e');
+    }
   }
 
   void clear() {
