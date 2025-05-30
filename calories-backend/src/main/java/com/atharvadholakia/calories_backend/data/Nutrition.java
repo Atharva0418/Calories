@@ -5,33 +5,33 @@ public class Nutrition {
   public Nutrition() {}
 
   private String food;
-  private String energy;
-  private String protein;
-  private String fat;
-  private String carbohydrates;
-  private String sugar;
+  private double energy;
+  private double protein;
+  private double fat;
+  private double carbohydrates;
+  private double sugar;
 
   public String getFood() {
     return this.food;
   }
 
-  public String getEnegery() {
+  public double getEnergy() {
     return this.energy;
   }
 
-  public String getProtein() {
+  public double getProtein() {
     return this.protein;
   }
 
-  public String getFat() {
+  public double getFat() {
     return this.fat;
   }
 
-  public String getCarbohydrates() {
+  public double getCarbohydrates() {
     return this.carbohydrates;
   }
 
-  public String getSugar() {
+  public double getSugar() {
     return this.sugar;
   }
 
@@ -39,23 +39,23 @@ public class Nutrition {
     this.food = food;
   }
 
-  public void setEnergy(String energy) {
+  public void setEnergy(double energy) {
     this.energy = energy;
   }
 
-  public void setProtein(String protein) {
+  public void setProtein(double protein) {
     this.protein = protein;
   }
 
-  public void setFat(String fat) {
+  public void setFat(double fat) {
     this.fat = fat;
   }
 
-  public void setCarbohydrated(String carbohydrates) {
+  public void setCarbohydrates(double carbohydrates) {
     this.carbohydrates = carbohydrates;
   }
 
-  public void setSugar(String sugar) {
+  public void setSugar(double sugar) {
     this.sugar = sugar;
   }
 }

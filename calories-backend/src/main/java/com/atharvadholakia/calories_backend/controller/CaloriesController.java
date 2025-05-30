@@ -38,12 +38,12 @@ public class CaloriesController {
     }
 
     Nutrition nutrition = new Nutrition();
-    nutrition.setFood("Athu");
-    nutrition.setEnergy("600");
-    nutrition.setProtein("20");
-    nutrition.setFat("9");
-    nutrition.setCarbohydrated("52");
-    nutrition.setSugar("15");
+    // nutrition.setFood("Athu");
+    // nutrition.setEnergy(" 600");
+    // nutrition.setProtein("20");
+    // nutrition.setFat("9");
+    // nutrition.setCarbohydrates("52");
+    // nutrition.setSugar("15");
 
     log.debug("Successfully calculated Nutrition info");
     System.out.println("Log");

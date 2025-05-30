@@ -64,7 +64,7 @@ class NutritionCard extends StatelessWidget {
               SizedBox(height: 20.h),
 
               // const Divider(thickness: 1, color: Colors.grey),
-              _buildNutritionRow("Energy", "${nutrition.calories}"),
+              _buildNutritionRow("Energy", "${nutrition.energy} kcal"),
 
               const Divider(thickness: 1, color: Colors.grey),
 
