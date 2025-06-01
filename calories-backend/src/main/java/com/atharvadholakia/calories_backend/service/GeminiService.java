@@ -67,7 +67,7 @@ public class GeminiService {
         """
 You are a certified nutritionist.
 
-Analyze the food in the following image and estimate its nutrition values **per 100g**. Focus on **structure, visible ingredients, and likely preparation method**.
+Analyze the food in the following image and estimate its nutrition values **per 100g**.
 
 Before generating JSON:
 - First, determine what the food is.
