@@ -1,8 +1,8 @@
 package com.atharvadholakia.calories_backend.service;
 
-import com.atharvadholakia.calories_backend.data.GeminiRequest;
-import com.atharvadholakia.calories_backend.data.GeminiResponse;
 import com.atharvadholakia.calories_backend.data.Nutrition;
+import com.atharvadholakia.calories_backend.data.NutritionRequest;
+import com.atharvadholakia.calories_backend.data.NutritionResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -21,41 +21,19 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class GeminiService {
+public class CaloriesService {
 
-  @Value("${gemini.api.key}")
+  @Value("${api.key}")
   private String apikey;
 
-  private static final String URL =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
+  @Value("${api.url}")
+  private String URL;
 
   private final RestTemplate restTemplate = new RestTemplate();
 
   @Autowired private ObjectMapper objectMapper;
 
-  public String askGemini(String prompt) {
-    GeminiRequest.Part part = new GeminiRequest.Part(prompt);
-    GeminiRequest.Content content = new GeminiRequest.Content(List.of(part));
-    GeminiRequest request = new GeminiRequest(List.of(content));
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers);
-
-    ResponseEntity<GeminiResponse> response =
-        restTemplate.exchange(URL + apikey, HttpMethod.POST, entity, GeminiResponse.class);
-
-    return Optional.ofNullable(response.getBody())
-        .flatMap(body -> body.getCandidates().stream().findFirst())
-        .map(candidate -> candidate.getContent())
-        .map(contentObj -> contentObj.getParts())
-        .filter(parts -> !parts.isEmpty())
-        .map(parts -> parts.get(0).getText())
-        .orElse("No response");
-  }
-
-  public Nutrition analyzaImageNutrition(MultipartFile imageFile) {
-
+  public Nutrition analyzeImageNutrition(MultipartFile imageFile) {
     String base64Image;
     try {
       base64Image = Base64.getEncoder().encodeToString(imageFile.getBytes());
@@ -89,16 +67,17 @@ data:image/jpeg;base64,%s
 """
             .formatted(base64Image);
 
-    GeminiRequest.Part part = new GeminiRequest.Part(prompt);
-    GeminiRequest.Content content = new GeminiRequest.Content(List.of(part));
-    GeminiRequest request = new GeminiRequest(List.of(content));
+    NutritionRequest.Part part = new NutritionRequest.Part(prompt);
+    NutritionRequest.Content content = new NutritionRequest.Content(List.of(part));
+    NutritionRequest request = new NutritionRequest(List.of(content));
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers);
+    HttpEntity<NutritionRequest> entity = new HttpEntity<>(request, headers);
 
-    ResponseEntity<GeminiResponse> response =
-        restTemplate.exchange(URL + apikey, HttpMethod.POST, entity, GeminiResponse.class);
+    ResponseEntity<NutritionResponse> response =
+        restTemplate.exchange(
+            URL + "?key=" + apikey, HttpMethod.POST, entity, NutritionResponse.class);
 
     String jsonResponse =
         Optional.ofNullable(response.getBody())

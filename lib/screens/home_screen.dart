@@ -1,3 +1,4 @@
+import 'package:calories/models/screen_state.dart';
 import 'package:calories/providers/nutrition_provider.dart';
 import 'package:calories/widgets/image_preview.dart';
 import 'package:calories/widgets/nutrition_card.dart';
@@ -18,8 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final nutritionProvider = context.watch<NutritionProvider>();
-    final image = nutritionProvider.imageFile;
     final nutrition = nutritionProvider.nutritionInfo;
+    final state = nutritionProvider.state;
 
     return Scaffold(
       appBar: AppBar(
@@ -36,23 +37,42 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.orangeAccent,
       ),
 
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0.w),
-          child: Column(
-            children: [
-              ImagePreview(image: nutritionProvider.imageFile),
-              SizedBox(height: 20.h),
+      body: Builder(
+        builder: (context) {
+          switch (state) {
+            case ScreenState.loading:
+              return const Center(child: CircularProgressIndicator());
 
-              if (nutrition != null)
-                NutritionCard(nutrition: nutritionProvider.nutritionInfo!),
+            case ScreenState.error:
+              return const Center(
+                child: Text("Something went wrong, Please try again."),
+              );
 
-              SizedBox(height: 10.h),
+            case ScreenState.success:
+            case ScreenState.idle:
+            default:
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0.w),
+                  child: Column(
+                    children: [
+                      ImagePreview(image: nutritionProvider.imageFile),
+                      SizedBox(height: 20.h),
 
-              const PickImageButton(),
-            ],
-          ),
-        ),
+                      if (nutrition != null)
+                        NutritionCard(
+                          nutrition: nutritionProvider.nutritionInfo!,
+                        ),
+
+                      SizedBox(height: 10.h),
+
+                      const PickImageButton(),
+                    ],
+                  ),
+                ),
+              );
+          }
+        },
       ),
     );
   }

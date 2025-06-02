@@ -2,11 +2,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:calories/models/nutrition_info.dart';
+import 'package:calories/models/screen_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
 class NutritionProvider with ChangeNotifier {
+  ScreenState _state = ScreenState.idle;
+
+  ScreenState? get state => _state;
+
+  void _setScreenState(ScreenState newState) {
+    _state = newState;
+    notifyListeners();
+  }
+
   File? _imageFile;
   NutritionInfo? _nutritionInfo;
 
@@ -20,10 +30,11 @@ class NutritionProvider with ChangeNotifier {
   }
 
   Future<void> uploadImage() async {
+    _setScreenState(ScreenState.loading);
     if (_imageFile == null) return;
 
     try {
-      final uri = Uri.parse('http://10.0.2.2:8080/gemini/analyze-nutrition');
+      final uri = Uri.parse('http://10.0.2.2:8080/api/nutrition');
       final request = http.MultipartRequest('POST', uri)
         ..files.add(
           await http.MultipartFile.fromPath(
@@ -43,8 +54,10 @@ class NutritionProvider with ChangeNotifier {
         _nutritionInfo = NutritionInfo.fromJson(jsonData);
 
         notifyListeners();
+        _setScreenState(ScreenState.success);
       }
     } catch (e) {
+      _setScreenState(ScreenState.error);
       debugPrint('Upload error: $e');
     }
   }
