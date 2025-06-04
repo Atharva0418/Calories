@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:calories/models/nutrition_info.dart';
 import 'package:calories/models/screen_state.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
@@ -34,7 +35,7 @@ class NutritionProvider with ChangeNotifier {
     if (_imageFile == null) return;
 
     try {
-      final uri = Uri.parse('http://10.0.2.2:8080/api/nutrition');
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/nutrition');
       final request = http.MultipartRequest('POST', uri)
         ..files.add(
           await http.MultipartFile.fromPath(
@@ -55,6 +56,8 @@ class NutritionProvider with ChangeNotifier {
 
         notifyListeners();
         _setScreenState(ScreenState.success);
+      } else if (response.statusCode == 503) {
+        _setScreenState(ScreenState.error);
       }
     } catch (e) {
       _setScreenState(ScreenState.error);
@@ -62,9 +65,10 @@ class NutritionProvider with ChangeNotifier {
     }
   }
 
-  void clear() {
+  void reset() {
     _imageFile = null;
     _nutritionInfo = null;
+    _setScreenState(ScreenState.idle);
     notifyListeners();
   }
 }
