@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:calories/providers/nutrition_provider.dart';
 import 'package:calories/widgets/image_preview.dart';
 import 'package:calories/widgets/nutrition_card.dart';
@@ -7,7 +5,6 @@ import 'package:calories/widgets/pick_image_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {

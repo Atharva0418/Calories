@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:calories/models/nutrition_info.dart';
@@ -15,16 +16,6 @@ class NutritionProvider with ChangeNotifier {
 
   void setImage(File image) {
     _imageFile = image;
-
-    _nutritionInfo = NutritionInfo(
-      food: "Athu",
-      calories: 500,
-      sugar: 20,
-      carbohydrates: 50,
-      protein: 12,
-      fat: 9,
-    );
-
     notifyListeners();
   }
 
@@ -32,17 +23,27 @@ class NutritionProvider with ChangeNotifier {
     if (_imageFile == null) return;
 
     try {
-      final uri = Uri.parse('http://10.0.2.2:8080/food/calories');
+      final uri = Uri.parse('http://10.0.2.2:8080/gemini/analyze-nutrition');
       final request = http.MultipartRequest('POST', uri)
         ..files.add(
           await http.MultipartFile.fromPath(
-            'image',
+            'imageFile',
             _imageFile!.path,
             filename: basename(_imageFile!.path),
           ),
         );
 
-      final response = await request.send();
+      final streamedResponse = await request.send();
+
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+
+        _nutritionInfo = NutritionInfo.fromJson(jsonData);
+
+        notifyListeners();
+      }
     } catch (e) {
       debugPrint('Upload error: $e');
     }
