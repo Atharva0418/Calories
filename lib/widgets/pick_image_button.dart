@@ -18,6 +18,7 @@ class PickImageButton extends StatelessWidget {
       final imageFile = File(pickedFile.path);
 
       provider.setImage(imageFile);
+      await provider.uploadImage();
     }
   }
 
