@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ErrorView extends StatelessWidget {
-  const ErrorView({super.key});
+  final String message;
+
+  const ErrorView({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class ErrorView extends StatelessWidget {
         child: Card(
           elevation: 12,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(40.r),
           ),
           color: Colors.white,
           child: Padding(
@@ -39,7 +41,7 @@ class ErrorView extends StatelessWidget {
                 SizedBox(height: 10.h),
 
                 Text(
-                  "Please go back and try again later.",
+                  message,
                   style: GoogleFonts.fredoka(
                     textStyle: TextStyle(
                       fontSize: 18.sp,

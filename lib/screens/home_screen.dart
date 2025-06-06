@@ -13,7 +13,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nutritionProvider = context.watch<NutritionProvider>();
-    final nutrition = nutritionProvider.nutritionInfo;
     final state = nutritionProvider.state;
 
     return Scaffold(
@@ -26,7 +25,11 @@ class HomeScreen extends StatelessWidget {
               return const LoadingView();
 
             case ScreenState.error:
-              return const ErrorView();
+              return ErrorView(
+                message:
+                    nutritionProvider.errorMessage ??
+                    "Something went wrong.Please try again later",
+              );
 
             case ScreenState.success:
             case ScreenState.idle:

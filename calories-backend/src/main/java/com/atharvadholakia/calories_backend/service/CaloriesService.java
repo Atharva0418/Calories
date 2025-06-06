@@ -3,6 +3,7 @@ package com.atharvadholakia.calories_backend.service;
 import com.atharvadholakia.calories_backend.data.Nutrition;
 import com.atharvadholakia.calories_backend.data.NutritionRequest;
 import com.atharvadholakia.calories_backend.data.NutritionResponse;
+import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -11,14 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class CaloriesService {
@@ -29,9 +27,13 @@ public class CaloriesService {
   @Value("${api.url}")
   private String URL;
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final WebClient webClient;
 
   @Autowired private ObjectMapper objectMapper;
+
+  public CaloriesService(WebClient webClient) {
+    this.webClient = webClient;
+  }
 
   public Nutrition analyzeImageNutrition(MultipartFile imageFile) {
     String base64Image;
@@ -71,32 +73,39 @@ data:image/jpeg;base64,%s
     NutritionRequest.Content content = new NutritionRequest.Content(List.of(part));
     NutritionRequest request = new NutritionRequest(List.of(content));
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<NutritionRequest> entity = new HttpEntity<>(request, headers);
-
-    ResponseEntity<NutritionResponse> response =
-        restTemplate.exchange(
-            URL + "?key=" + apikey, HttpMethod.POST, entity, NutritionResponse.class);
-
-    String jsonResponse =
-        Optional.ofNullable(response.getBody())
-            .flatMap(body -> body.getCandidates().stream().findFirst())
-            .map(candidate -> candidate.getContent())
-            .map(contentObj -> contentObj.getParts())
-            .filter(parts -> !parts.isEmpty())
-            .map(parts -> parts.get(0).getText())
-            .orElse("No response");
-
-    jsonResponse = cleanJson(jsonResponse);
-    Nutrition nutrition;
     try {
-      nutrition = objectMapper.readValue(jsonResponse, Nutrition.class);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e.getMessage());
+
+      NutritionResponse nutritionResponse =
+          webClient
+              .post()
+              .uri(URL + "?key=" + apikey)
+              .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+              .bodyValue(request)
+              .retrieve()
+              .bodyToMono(NutritionResponse.class)
+              .block();
+
+      String jsonResponse =
+          Optional.ofNullable(nutritionResponse)
+              .flatMap(body -> body.getCandidates().stream().findFirst())
+              .map(candidate -> candidate.getContent())
+              .map(contentObj -> contentObj.getParts())
+              .filter(parts -> !parts.isEmpty())
+              .map(parts -> parts.get(0).getText())
+              .orElse("No response.Please try again.");
+
+      jsonResponse = cleanJson(jsonResponse);
+      Nutrition nutrition;
+      try {
+        nutrition = objectMapper.readValue(jsonResponse, Nutrition.class);
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e.getMessage());
+      }
+
+      return nutrition;
+    } catch (RuntimeException e) {
+      throw new CustomTimeOutException();
     }
-    System.out.println("Log");
-    return nutrition;
   }
 
   public String cleanJson(String rawJson) {
@@ -104,5 +113,14 @@ data:image/jpeg;base64,%s
     int endIndex = rawJson.lastIndexOf('}');
 
     return rawJson.substring(startIndex, endIndex + 1).trim();
+  }
+
+  public String getMIMEType(String filename) {
+    String ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+    return switch (ext) {
+      case "jpg", "jpeg" -> "image/jpeg";
+      case "png" -> "image/png";
+      default -> "applicaton/octet-stream";
+    };
   }
 }

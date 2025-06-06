@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -30,6 +31,15 @@ class NutritionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String? _errorMessage;
+
+  String? get errorMessage => _errorMessage;
+
+  void _setError(String message) {
+    _errorMessage = message;
+    _setScreenState(ScreenState.error);
+  }
+
   Future<void> uploadImage() async {
     _setScreenState(ScreenState.loading);
     if (_imageFile == null) return;
@@ -45,7 +55,13 @@ class NutritionProvider with ChangeNotifier {
           ),
         );
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await request.send().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          _setError("Request taking too long. Please try again later.");
+          throw TimeoutException("Timed out");
+        },
+      );
 
       final response = await http.Response.fromStream(streamedResponse);
 
@@ -56,12 +72,12 @@ class NutritionProvider with ChangeNotifier {
 
         notifyListeners();
         _setScreenState(ScreenState.success);
-      } else if (response.statusCode == 503) {
-        _setScreenState(ScreenState.error);
+      } else {
+        final errorMsg = json.decode(response.body).values.first.toString();
+        _setError(errorMsg);
       }
     } catch (e) {
-      _setScreenState(ScreenState.error);
-      debugPrint('Upload error: $e');
+      _setError("Unknown error occurred.Please try again later.");
     }
   }
 
