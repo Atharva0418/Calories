@@ -2,7 +2,7 @@ package com.atharvadholakia.calories_backend.data;
 
 import java.util.List;
 
-public class GeminiResponse {
+public class NutritionResponse {
   private List<Candidate> candidates;
 
   public List<Candidate> getCandidates() {
