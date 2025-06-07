@@ -56,7 +56,7 @@ class NutritionProvider with ChangeNotifier {
         );
 
       final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 10),
+        const Duration(seconds: 15),
         onTimeout: () {
           _setError("Request taking too long. Please try again later.");
           throw TimeoutException("Timed out");
