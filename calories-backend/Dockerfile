@@ -1,4 +1,4 @@
-#Build
+#Build Stage
 FROM eclipse-temurin:21-jdk-noble AS build
 
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY src src
 
 RUN ./gradlew bootJar --no-daemon
 
-#Production
+#Production Stage
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
