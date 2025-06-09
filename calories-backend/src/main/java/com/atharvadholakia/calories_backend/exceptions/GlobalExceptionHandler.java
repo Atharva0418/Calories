@@ -46,16 +46,17 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(CustomTimeOutException.class)
-  public ResponseEntity<?> handleCustomTimeOutException(CustomTimeOutException ex) {
+  public ResponseEntity<HashMap<String, String>> handleCustomTimeOutException(
+      CustomTimeOutException ex) {
     return buildErrorResponse(
         "Request taking too long. Please try again later.", HttpStatus.GATEWAY_TIMEOUT);
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
-    return buildErrorResponse(
-        "Internal Server Error. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+  // @ExceptionHandler(Exception.class)
+  // public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
+  //   return buildErrorResponse(
+  //       "Internal Server Error. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+  // }
 
   private ResponseEntity<HashMap<String, String>> buildErrorResponse(
       String message, HttpStatus status) {

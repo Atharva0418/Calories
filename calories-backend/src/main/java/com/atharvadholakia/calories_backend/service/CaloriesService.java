@@ -6,6 +6,7 @@ import com.atharvadholakia.calories_backend.data.NutritionResponse;
 import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.handler.timeout.ReadTimeoutException;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -13,18 +14,21 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
 public class CaloriesService {
 
-  @Value("${api.key}")
+  @Value("${MODEL_API_KEY}")
   private String apikey;
 
-  @Value("${api.url}")
+  @Value("${API_URL}")
   private String URL;
 
   private final WebClient webClient;
@@ -103,8 +107,19 @@ data:image/jpeg;base64,%s
       }
 
       return nutrition;
+    } catch (WebClientResponseException e) {
+      System.out.println(e.getMessage());
+      if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED);
+      }
+      throw new RuntimeException();
+
     } catch (RuntimeException e) {
-      throw new CustomTimeOutException();
+      if (e.getCause() instanceof ReadTimeoutException) {
+        throw new CustomTimeOutException();
+      }
+      System.out.println(e.getMessage());
+      throw new RuntimeException();
     }
   }
 
