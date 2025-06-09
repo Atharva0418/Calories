@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:calories/screens/widgets/pick_image_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,20 +31,27 @@ class ImagePreview extends StatelessWidget {
         child: Image.file(image!, fit: BoxFit.cover),
       );
     } else {
-      return Center(
-        child: Column(
-          children: [
-            Text(
-              'Snap your snack to track!',
-              style: GoogleFonts.fredoka(
-                textStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 30.sp,
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Snap your snack to track!',
+                style: GoogleFonts.fredoka(
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 30.sp,
+                  ),
                 ),
               ),
-            ),
-            Icon(Icons.fastfood_rounded, size: 100, color: Colors.deepOrange),
-          ],
+              Icon(Icons.fastfood_rounded, size: 100, color: Colors.deepOrange),
+              SizedBox(height: 20.h),
+
+              const PickImageButton(),
+            ],
+          ),
         ),
       );
     }
