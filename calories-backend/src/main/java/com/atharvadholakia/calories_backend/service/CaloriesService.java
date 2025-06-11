@@ -4,6 +4,7 @@ import com.atharvadholakia.calories_backend.data.Nutrition;
 import com.atharvadholakia.calories_backend.data.NutritionRequest;
 import com.atharvadholakia.calories_backend.data.NutritionResponse;
 import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
+import com.atharvadholakia.calories_backend.exceptions.InvalidImageException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -36,6 +37,8 @@ public class CaloriesService {
   }
 
   public Nutrition analyzeImageNutrition(MultipartFile imageFile) {
+    isValidImage(imageFile);
+
     String base64Image;
     try {
       base64Image = Base64.getEncoder().encodeToString(imageFile.getBytes());
@@ -122,5 +125,16 @@ data:image/jpeg;base64,%s
       case "png" -> "image/png";
       default -> "applicaton/octet-stream";
     };
+  }
+
+  public void isValidImage(MultipartFile imageFile) {
+    String contentType = getMIMEType(imageFile.getOriginalFilename());
+
+    if (contentType == null
+        || !(contentType.equalsIgnoreCase("image/jpeg")
+            || contentType.equalsIgnoreCase("image/png")
+            || contentType.equalsIgnoreCase("image/jpg"))) {
+      throw new InvalidImageException();
+    }
   }
 }
