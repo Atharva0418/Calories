@@ -20,7 +20,7 @@ public class CaloriesController {
     this.caloriesService = caloriesService;
   }
 
-  @PostMapping("/nutrition")
+  @PostMapping("/predict-nutrients")
   public ResponseEntity<Nutrition> analyzeNutrition(
       @RequestParam("imageFile") MultipartFile imageFile) {
 

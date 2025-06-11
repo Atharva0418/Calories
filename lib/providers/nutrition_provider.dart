@@ -45,7 +45,7 @@ class NutritionProvider with ChangeNotifier {
     if (_imageFile == null) return;
 
     try {
-      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/nutrition');
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/predict-nutrients');
       final request = http.MultipartRequest('POST', uri)
         ..files.add(
           await http.MultipartFile.fromPath(
@@ -73,7 +73,11 @@ class NutritionProvider with ChangeNotifier {
         notifyListeners();
         _setScreenState(ScreenState.success);
       } else {
-        final errorMsg = json.decode(response.body).values.first.toString();
+        final errorMsg = json
+            .decode(response.body)
+            .values
+            .first
+            .toString();
         _setError(errorMsg);
       }
     } catch (e) {
