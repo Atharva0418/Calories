@@ -81,7 +81,7 @@ class NutritionProvider with ChangeNotifier {
         _setError(errorMsg);
       }
     } catch (e) {
-      _setError("Unknown error occurred.Please try again later.");
+      debugPrint(e.toString());
     }
   }
 
