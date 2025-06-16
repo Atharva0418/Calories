@@ -2,12 +2,12 @@ package com.atharvadholakia.calories_backend.data;
 
 import java.util.List;
 
-public class GeminiRequest {
+public class NutritionRequest {
   private List<Content> contents;
 
-  public GeminiRequest() {}
+  public NutritionRequest() {}
 
-  public GeminiRequest(List<Content> contents) {
+  public NutritionRequest(List<Content> contents) {
     this.contents = contents;
   }
 

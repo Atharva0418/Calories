@@ -40,6 +40,9 @@ dependencies:
   flutter_screenutil: ^5.9.3
   http: ^1.4.0
   path: ^1.9.1
+  flutter_dotenv: ^5.2.1
+  flutter_spinkit: ^5.2.1
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +61,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - .env
+    - assets/animations/SearchingFood_colored.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
