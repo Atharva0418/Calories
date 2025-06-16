@@ -1,5 +1,6 @@
 package com.atharvadholakia.calories_backend.service;
 
+import com.atharvadholakia.calories_backend.config.ServiceConfig;
 import com.atharvadholakia.calories_backend.data.Nutrition;
 import com.atharvadholakia.calories_backend.data.NutritionRequest;
 import com.atharvadholakia.calories_backend.data.NutritionResponse;
@@ -12,7 +13,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,22 +24,22 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 @Service
 public class CaloriesService {
-
-  @Value("${MODEL_API_KEY}")
-  private String apikey;
-
-  @Value("${API_URL}")
-  private String URL;
-
   private final WebClient webClient;
 
-  @Autowired private ObjectMapper objectMapper;
+  private final ServiceConfig serviceConfig;
 
-  public CaloriesService(WebClient webClient) {
+  private final ObjectMapper objectMapper;
+
+  @Autowired
+  public CaloriesService(
+      WebClient webClient, ServiceConfig serviceConfig, ObjectMapper objectMapper) {
     this.webClient = webClient;
+    this.serviceConfig = serviceConfig;
+    this.objectMapper = objectMapper;
   }
 
   public Nutrition analyzeImageNutrition(MultipartFile imageFile) {
+
     String base64Image;
     try {
       base64Image = Base64.getEncoder().encodeToString(imageFile.getBytes());
@@ -47,31 +47,7 @@ public class CaloriesService {
       throw new RuntimeException(e.getMessage());
     }
 
-    String prompt =
-        """
-You are a certified nutritionist.
-
-Analyze the food in the following image and estimate its nutrition values **per 100g**.
-
-Before generating JSON:
-- First, determine what the food is.
-- Then, based on typical examples of that food, estimate nutrition.
-
-You must respond **only** in the following JSON structure:
-
-{
-  "food": "<name of the food>",
-  "protein": <amount in grams>,
-  "carbohydrates": <amount in grams>,
-  "sugar": <amount in grams>,
-  "fat": <amount in grams>,
-  "energy": <amount in kcal>
-}
-
-Now analyze this image:
-data:image/jpeg;base64,%s
-"""
-            .formatted(base64Image);
+    String prompt = getPrompt(base64Image);
 
     NutritionRequest.Part part = new NutritionRequest.Part(prompt);
     NutritionRequest.Content content = new NutritionRequest.Content(List.of(part));
@@ -82,7 +58,7 @@ data:image/jpeg;base64,%s
       NutritionResponse nutritionResponse =
           webClient
               .post()
-              .uri(URL + "?key=" + apikey)
+              .uri(serviceConfig.getUrl() + "?key=" + serviceConfig.getApiKey())
               .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
               .bodyValue(request)
               .retrieve()
@@ -137,5 +113,46 @@ data:image/jpeg;base64,%s
       case "png" -> "image/png";
       default -> "applicaton/octet-stream";
     };
+  }
+
+  public boolean isValidImage(MultipartFile imageFile) {
+    String contentType = getMIMEType(imageFile.getOriginalFilename());
+
+    if (contentType.equalsIgnoreCase("image/jpeg")
+        || contentType.equalsIgnoreCase("image/png")
+        || contentType.equalsIgnoreCase("image/jpg")) {
+      return true;
+    }
+    return false;
+  }
+
+  public String getPrompt(String stringOfImage) {
+    String prompt =
+        """
+You are a certified nutritionist.
+
+Analyze the food in the following image and estimate its nutrition values **per 100g**.
+
+Before generating JSON:
+- First, determine what the food is.
+- Then, based on typical examples of that food, estimate nutrition.
+
+You must respond **only** in the following JSON structure:
+
+{
+  "food": "<name of the food>",
+  "protein": <amount in grams>,
+  "carbohydrates": <amount in grams>,
+  "sugar": <amount in grams>,
+  "fat": <amount in grams>,
+  "energy": <amount in kcal>
+}
+
+Now analyze this image:
+data:image/jpeg;base64,%s
+"""
+            .formatted(stringOfImage);
+
+    return prompt;
   }
 }

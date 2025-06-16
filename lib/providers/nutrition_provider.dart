@@ -45,17 +45,15 @@ class NutritionProvider with ChangeNotifier {
     if (_imageFile == null) return;
 
     try {
-      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/nutrition');
-      final request =
-          http.MultipartRequest('POST', uri)
-            ..files.add(
-              await http.MultipartFile.fromPath(
-                'imageFile',
-                _imageFile!.path,
-                filename: basename(_imageFile!.path),
-              ),
-            )
-            ..headers['x-api-key'] = '${dotenv.env['X_API_KEY']}';
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/predict-nutrients');
+      final request = http.MultipartRequest('POST', uri)
+        ..files.add(
+          await http.MultipartFile.fromPath(
+            'imageFile',
+            _imageFile!.path,
+            filename: basename(_imageFile!.path),
+          ),
+        );
 
       final streamedResponse = await request.send().timeout(
         const Duration(seconds: 15),

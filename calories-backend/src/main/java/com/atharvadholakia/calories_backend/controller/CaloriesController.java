@@ -21,17 +21,12 @@ public class CaloriesController {
     this.caloriesService = caloriesService;
   }
 
-  @PostMapping("/nutrition")
+  @PostMapping("/predict-nutrients")
   public ResponseEntity<Nutrition> analyzeNutrition(
       @RequestParam("imageFile") MultipartFile imageFile) {
-    String contentType = caloriesService.getMIMEType(imageFile.getOriginalFilename());
 
-    if (contentType == null
-        || !(contentType.equalsIgnoreCase("image/jpeg")
-            || contentType.equalsIgnoreCase("image/png")
-            || contentType.equalsIgnoreCase("image/jpg"))) {
-      throw new InvalidImageException();
-    }
+    if (!caloriesService.isValidImage(imageFile)) throw new InvalidImageException();
+
     Nutrition nutrition = caloriesService.analyzeImageNutrition(imageFile);
     return new ResponseEntity<>(nutrition, HttpStatus.OK);
   }
