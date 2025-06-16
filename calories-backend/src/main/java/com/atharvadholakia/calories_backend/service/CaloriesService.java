@@ -103,10 +103,12 @@ public class CaloriesService {
   public boolean isValidImage(MultipartFile imageFile) {
     String contentType = getMIMEType(imageFile.getOriginalFilename());
 
-    return !(contentType == null
-        || !(contentType.equalsIgnoreCase("image/jpeg")
-            || contentType.equalsIgnoreCase("image/png")
-            || contentType.equalsIgnoreCase("image/jpg")));
+    if (contentType.equalsIgnoreCase("image/jpeg")
+        || contentType.equalsIgnoreCase("image/png")
+        || contentType.equalsIgnoreCase("image/jpg")) {
+      return true;
+    }
+    return false;
   }
 
   public String getPrompt(String stringOfImage) {
