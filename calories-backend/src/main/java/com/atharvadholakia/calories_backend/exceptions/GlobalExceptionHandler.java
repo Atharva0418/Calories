@@ -46,7 +46,8 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(CustomTimeOutException.class)
-  public ResponseEntity<?> handleCustomTimeOutException(CustomTimeOutException ex) {
+  public ResponseEntity<HashMap<String, String>> handleCustomTimeOutException(
+      CustomTimeOutException ex) {
     return buildErrorResponse(
         "Request taking too long. Please try again later.", HttpStatus.GATEWAY_TIMEOUT);
   }

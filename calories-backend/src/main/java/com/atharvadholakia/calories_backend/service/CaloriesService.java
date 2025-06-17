@@ -7,6 +7,7 @@ import com.atharvadholakia.calories_backend.data.NutritionResponse;
 import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.handler.timeout.ReadTimeoutException;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
 public class CaloriesService {
@@ -79,8 +81,15 @@ public class CaloriesService {
       }
 
       return nutrition;
+    } catch (WebClientResponseException e) {
+      throw new RuntimeException();
+
     } catch (RuntimeException e) {
-      throw new CustomTimeOutException();
+      if (e.getCause() instanceof ReadTimeoutException) {
+        throw new CustomTimeOutException();
+      }
+
+      throw new RuntimeException();
     }
   }
 

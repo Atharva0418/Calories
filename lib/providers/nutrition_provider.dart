@@ -73,11 +73,7 @@ class NutritionProvider with ChangeNotifier {
         notifyListeners();
         _setScreenState(ScreenState.success);
       } else {
-        final errorMsg = json
-            .decode(response.body)
-            .values
-            .first
-            .toString();
+        final errorMsg = json.decode(response.body).values.first.toString();
         _setError(errorMsg);
       }
     } catch (e) {
