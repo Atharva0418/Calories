@@ -14,10 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -84,17 +82,13 @@ public class CaloriesService {
 
       return nutrition;
     } catch (WebClientResponseException e) {
-      System.out.println(e.getMessage());
-      if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-        throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED);
-      }
       throw new RuntimeException();
 
     } catch (RuntimeException e) {
       if (e.getCause() instanceof ReadTimeoutException) {
         throw new CustomTimeOutException();
       }
-      System.out.println(e.getMessage());
+
       throw new RuntimeException();
     }
   }
