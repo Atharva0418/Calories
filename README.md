@@ -65,8 +65,9 @@ which handles image processing and calorie estimation.
         ```
     - Before running the server, make an .env file in the "calories-backend" directory and add the folllowing details in it.The "X-API_KEY" must be same in both the frontend and the backend.
         ```
-        BASE_URL=http://10.0.2.2:8080
-        X_API_KEY=<random-api-key>
+        MODEL_API_KEY=<your_gemini_api_key>
+        API_URL=<your_gemini_api_url>
+        X_API_KEY=<random_api_key>
         ```
 
     - Use the following command to run the services defined in the `docker-compose.yml` file. (Docker engine must be running.)
