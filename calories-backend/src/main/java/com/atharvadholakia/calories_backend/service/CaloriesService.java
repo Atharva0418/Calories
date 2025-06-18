@@ -5,6 +5,7 @@ import com.atharvadholakia.calories_backend.data.Nutrition;
 import com.atharvadholakia.calories_backend.data.NutritionRequest;
 import com.atharvadholakia.calories_backend.data.NutritionResponse;
 import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
+import com.atharvadholakia.calories_backend.exceptions.NotAFoodImageException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.handler.timeout.ReadTimeoutException;
@@ -49,7 +50,8 @@ public class CaloriesService {
 
     NutritionRequest.ImagePart imagePart =
         new NutritionRequest.ImagePart(
-            new NutritionRequest.InlineData(imageFile.getContentType(), base64Image));
+            new NutritionRequest.InlineData(
+                getMIMEType(imageFile.getOriginalFilename()), base64Image));
 
     NutritionRequest.Content content = new NutritionRequest.Content(List.of(textPart, imagePart));
 
@@ -77,25 +79,26 @@ public class CaloriesService {
               .orElse("No response.Please try again.");
 
       jsonResponse = cleanJson(jsonResponse);
+
+      if (jsonResponse.contains("\"Error\"")) throw new NotAFoodImageException();
+
       Nutrition nutrition;
       try {
         nutrition = objectMapper.readValue(jsonResponse, Nutrition.class);
+
+        return nutrition;
       } catch (JsonProcessingException e) {
         throw new RuntimeException(e.getMessage());
       }
 
-      return nutrition;
     } catch (WebClientResponseException e) {
-      System.out.println(e.getMessage());
-      throw new RuntimeException();
+      throw e;
 
     } catch (RuntimeException e) {
       if (e.getCause() instanceof ReadTimeoutException) {
         throw new CustomTimeOutException();
       }
-      System.out.println(e.getMessage());
-
-      throw new RuntimeException();
+      throw e;
     }
   }
 
@@ -127,29 +130,33 @@ public class CaloriesService {
   }
 
   public String getPrompt() {
-    String prompt =
-        """
-You are a certified nutritionist.
+    return """
+You are a food detection and nutrition assistant.
 
-Analyze the image and estimate the nutritional values of the food shown, based on 100 grams.
+Stage 1: Image Classification
+- Look at the image carefully.
+- Decide: Does the image contain food?
+- If it does NOT contain food, STOP and respond ONLY with this JSON:
+{
+  "Error": "This is not a food image."
+}
+- Do NOT proceed to the next stage.
 
-Follow these steps:
-1. Identify the food item.
-2. Use standard nutritional references for that food.
-3. Return the result strictly in the JSON format below.
-
-Respond **only** with a JSON object in this structure:
+Stage 2: Nutrition Analysis
+- Identify the food item.
+- Use common nutrition databases to estimate its nutrition values PER 100 grams.
+- Then respond with ONLY a JSON object in this exact format:
 
 {
-  "food": "<name of the food>",
+  "food": "<name of the food. Capitalize the first letter.>",
   "protein": <grams>,
   "carbohydrates": <grams>,
   "sugar": <grams>,
   "fat": <grams>,
   "energy": <kcal>
 }
-""";
 
-    return prompt;
+Do not include any other explanation or text. Only output valid JSON.
+""";
   }
 }
