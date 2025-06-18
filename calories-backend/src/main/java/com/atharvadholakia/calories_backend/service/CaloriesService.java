@@ -45,10 +45,14 @@ public class CaloriesService {
       throw new RuntimeException(e.getMessage());
     }
 
-    String prompt = getPrompt(base64Image);
+    NutritionRequest.TextPart textPart = new NutritionRequest.TextPart(getPrompt());
 
-    NutritionRequest.Part part = new NutritionRequest.Part(prompt);
-    NutritionRequest.Content content = new NutritionRequest.Content(List.of(part));
+    NutritionRequest.ImagePart imagePart =
+        new NutritionRequest.ImagePart(
+            new NutritionRequest.InlineData(imageFile.getContentType(), base64Image));
+
+    NutritionRequest.Content content = new NutritionRequest.Content(List.of(textPart, imagePart));
+
     NutritionRequest request = new NutritionRequest(List.of(content));
 
     try {
@@ -82,12 +86,14 @@ public class CaloriesService {
 
       return nutrition;
     } catch (WebClientResponseException e) {
+      System.out.println(e.getMessage());
       throw new RuntimeException();
 
     } catch (RuntimeException e) {
       if (e.getCause() instanceof ReadTimeoutException) {
         throw new CustomTimeOutException();
       }
+      System.out.println(e.getMessage());
 
       throw new RuntimeException();
     }
@@ -120,32 +126,29 @@ public class CaloriesService {
     return false;
   }
 
-  public String getPrompt(String stringOfImage) {
+  public String getPrompt() {
     String prompt =
         """
 You are a certified nutritionist.
 
-Analyze the food in the following image and estimate its nutrition values **per 100g**.
+Analyze the image and estimate the nutritional values of the food shown, based on 100 grams.
 
-Before generating JSON:
-- First, determine what the food is.
-- Then, based on typical examples of that food, estimate nutrition.
+Follow these steps:
+1. Identify the food item.
+2. Use standard nutritional references for that food.
+3. Return the result strictly in the JSON format below.
 
-You must respond **only** in the following JSON structure:
+Respond **only** with a JSON object in this structure:
 
 {
   "food": "<name of the food>",
-  "protein": <amount in grams>,
-  "carbohydrates": <amount in grams>,
-  "sugar": <amount in grams>,
-  "fat": <amount in grams>,
-  "energy": <amount in kcal>
+  "protein": <grams>,
+  "carbohydrates": <grams>,
+  "sugar": <grams>,
+  "fat": <grams>,
+  "energy": <kcal>
 }
-
-Now analyze this image:
-data:image/jpeg;base64,%s
-"""
-            .formatted(stringOfImage);
+""";
 
     return prompt;
   }
