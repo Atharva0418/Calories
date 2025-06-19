@@ -77,5 +77,5 @@ which handles image processing and calorie estimation.
 
 ### Architecture
 
-![Userflow](assets/images/Calories_ArchitecturalDiagram.png)
+![Architecture](assets/images/Calories_ArchitecturalDiagram.png)
 
