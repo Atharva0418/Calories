@@ -75,7 +75,7 @@ which handles image processing and calorie estimation.
         docker compose up
         ```
 
-### Userflow
+### Architecture
 
 ![Userflow](assets/images/Calories_ArchitecturalDiagram.png)
 
