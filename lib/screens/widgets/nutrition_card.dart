@@ -51,15 +51,28 @@ class NutritionCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                nutrition.food,
-                style: GoogleFonts.fredoka(
-                  textStyle: TextStyle(
-                    fontSize: 32.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.deepOrangeAccent,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    nutrition.food,
+                    style: GoogleFonts.fredoka(
+                      textStyle: TextStyle(
+                        fontSize: 32.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.deepOrangeAccent,
+                      ),
+                    ),
                   ),
-                ),
+                  Text(
+                    "Values are per 100g.",
+                    style: GoogleFonts.fredoka(
+                      textStyle: TextStyle(fontSize: 16.sp),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20.h),
 

@@ -131,9 +131,8 @@ public class CaloriesService {
 
   public String getPrompt() {
     return """
-You are a food detection and nutrition assistant.
+You are a certified nutritionist.
 
-Stage 1: Image Classification
 - Look at the image carefully.
 - Decide: Does the image contain food?
 - If it does NOT contain food, STOP and respond ONLY with this JSON:
@@ -144,7 +143,7 @@ Stage 1: Image Classification
 
 Stage 2: Nutrition Analysis
 - Identify the food item.
-- Use common nutrition databases to estimate its nutrition values PER 100 grams.
+- Estimate its nutrition values PER 100 grams.
 - Then respond with ONLY a JSON object in this exact format:
 
 {
