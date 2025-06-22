@@ -28,7 +28,7 @@ class ErrorView extends StatelessWidget {
                 SizedBox(height: 20.h),
 
                 Text(
-                  "Oops! Something went wrong.",
+                  "Oops! $message",
                   style: GoogleFonts.fredoka(
                     textStyle: TextStyle(
                       fontSize: 26.sp,
@@ -39,20 +39,6 @@ class ErrorView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 10.h),
-
-                Text(
-                  message,
-                  style: GoogleFonts.fredoka(
-                    textStyle: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: 24.h),
 
                 const GoBackButton(),
               ],

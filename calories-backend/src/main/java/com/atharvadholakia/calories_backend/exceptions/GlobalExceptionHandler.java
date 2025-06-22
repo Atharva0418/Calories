@@ -52,6 +52,12 @@ public class GlobalExceptionHandler {
         "Request taking too long. Please try again later.", HttpStatus.GATEWAY_TIMEOUT);
   }
 
+  @ExceptionHandler(NotAFoodImageException.class)
+  public ResponseEntity<?> handleNotAFoodImageExcpetion(NotAFoodImageException ex) {
+    return buildErrorResponse(
+        "This is not a food image. Please upload an appropriate image.", HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
     return buildErrorResponse(

@@ -55,15 +55,21 @@ class NutritionCard extends StatelessWidget {
                 nutrition.food,
                 style: GoogleFonts.fredoka(
                   textStyle: TextStyle(
-                    fontSize: 32.sp,
+                    fontSize: 30.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.deepOrangeAccent,
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
+              Text(
+                "Values are per 100g.",
+                style: GoogleFonts.fredoka(
+                  textStyle: TextStyle(fontSize: 15.sp),
+                  fontWeight: FontWeight.w600,
+                  color: Colors.deepOrangeAccent,
+                ),
+              ),
 
-              // const Divider(thickness: 1, color: Colors.grey),
               _buildNutritionRow("Energy", "${nutrition.energy} kcal"),
 
               const Divider(thickness: 1, color: Colors.grey),

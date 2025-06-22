@@ -5,6 +5,7 @@ import com.atharvadholakia.calories_backend.data.Nutrition;
 import com.atharvadholakia.calories_backend.data.NutritionRequest;
 import com.atharvadholakia.calories_backend.data.NutritionResponse;
 import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
+import com.atharvadholakia.calories_backend.exceptions.NotAFoodImageException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.handler.timeout.ReadTimeoutException;
@@ -45,10 +46,15 @@ public class CaloriesService {
       throw new RuntimeException(e.getMessage());
     }
 
-    String prompt = getPrompt(base64Image);
+    NutritionRequest.TextPart textPart = new NutritionRequest.TextPart(getPrompt());
 
-    NutritionRequest.Part part = new NutritionRequest.Part(prompt);
-    NutritionRequest.Content content = new NutritionRequest.Content(List.of(part));
+    NutritionRequest.ImagePart imagePart =
+        new NutritionRequest.ImagePart(
+            new NutritionRequest.InlineData(
+                getMIMEType(imageFile.getOriginalFilename()), base64Image));
+
+    NutritionRequest.Content content = new NutritionRequest.Content(List.of(textPart, imagePart));
+
     NutritionRequest request = new NutritionRequest(List.of(content));
 
     try {
@@ -73,23 +79,26 @@ public class CaloriesService {
               .orElse("No response.Please try again.");
 
       jsonResponse = cleanJson(jsonResponse);
+
+      if (jsonResponse.contains("\"Error\"")) throw new NotAFoodImageException();
+
       Nutrition nutrition;
       try {
         nutrition = objectMapper.readValue(jsonResponse, Nutrition.class);
+
+        return nutrition;
       } catch (JsonProcessingException e) {
         throw new RuntimeException(e.getMessage());
       }
 
-      return nutrition;
     } catch (WebClientResponseException e) {
-      throw new RuntimeException();
+      throw e;
 
     } catch (RuntimeException e) {
       if (e.getCause() instanceof ReadTimeoutException) {
         throw new CustomTimeOutException();
       }
-
-      throw new RuntimeException();
+      throw e;
     }
   }
 
@@ -120,33 +129,34 @@ public class CaloriesService {
     return false;
   }
 
-  public String getPrompt(String stringOfImage) {
-    String prompt =
-        """
+  public String getPrompt() {
+    return """
 You are a certified nutritionist.
 
-Analyze the food in the following image and estimate its nutrition values **per 100g**.
+- Look at the image carefully.
+- Decide: Does the image contain food?
+- If it does NOT contain food, STOP and respond ONLY with this JSON:
+{
+  "Error": "This is not a food image."
+}
+- Do NOT proceed to the next stage.
 
-Before generating JSON:
-- First, determine what the food is.
-- Then, based on typical examples of that food, estimate nutrition.
-
-You must respond **only** in the following JSON structure:
+Stage 2: Nutrition Analysis
+- Identify the food items.
+- Estimate its nutrition values PER 100 grams.
+- If there are multiple food items, display name of all food items and concatenate them by a comma and the nutrition value should be average of all the food items Per 100 grams.
+- Then respond with ONLY a JSON object in this exact format:
 
 {
-  "food": "<name of the food>",
-  "protein": <amount in grams>,
-  "carbohydrates": <amount in grams>,
-  "sugar": <amount in grams>,
-  "fat": <amount in grams>,
-  "energy": <amount in kcal>
+  "food": "<name of the food. Capitalize the first letter.>",
+  "protein": <grams>,
+  "carbohydrates": <grams>,
+  "sugar": <grams>,
+  "fat": <grams>,
+  "energy": <kcal>
 }
 
-Now analyze this image:
-data:image/jpeg;base64,%s
-"""
-            .formatted(stringOfImage);
-
-    return prompt;
+Do not include any other explanation or text. Only output valid JSON.
+""";
   }
 }
