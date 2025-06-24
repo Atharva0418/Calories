@@ -25,6 +25,12 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
       @NonNull FilterChain filterChain)
       throws ServletException, IOException {
 
+    String path = request.getRequestURI();
+    if (path.equals("/api/health")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     String requestApiKey = request.getHeader(API_KEY_HEADER);
 
     if (requestApiKey == null || !requestApiKey.equals(xApiKey)) {

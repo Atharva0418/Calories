@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
+@Slf4j
 public class CaloriesService {
   private final WebClient webClient;
 
@@ -45,7 +47,7 @@ public class CaloriesService {
     } catch (IOException e) {
       throw new RuntimeException(e.getMessage());
     }
-
+    log.info("Forming a request for AI Model.");
     NutritionRequest.TextPart textPart = new NutritionRequest.TextPart(getPrompt());
 
     NutritionRequest.ImagePart imagePart =
@@ -58,7 +60,7 @@ public class CaloriesService {
     NutritionRequest request = new NutritionRequest(List.of(content));
 
     try {
-
+      log.info("Calling AI Model to analyse the image and predict nutrients.");
       NutritionResponse nutritionResponse =
           webClient
               .post()
@@ -76,8 +78,9 @@ public class CaloriesService {
               .map(contentObj -> contentObj.getParts())
               .filter(parts -> !parts.isEmpty())
               .map(parts -> parts.get(0).getText())
-              .orElse("No response.Please try again.");
+              .orElse("No response. Please try again.");
 
+      log.info("Successfully receieved response from AI Model.");
       jsonResponse = cleanJson(jsonResponse);
 
       if (jsonResponse.contains("\"Error\"")) throw new NotAFoodImageException();
