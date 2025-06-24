@@ -3,12 +3,13 @@ package com.atharvadholakia.calories_backend.exceptions;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @RestControllerAdvice
 @Slf4j
@@ -30,12 +31,15 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(errorMessage, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(HttpServerErrorException.class)
+  @ExceptionHandler(WebClientResponseException.class)
   public ResponseEntity<HashMap<String, String>> handleHttpServerErrorException(
-      HttpServerErrorException ex) {
-    String errorMessage = "Service Unavailable. Please try again later.";
+      WebClientResponseException ex) {
+
+    String errorMessage = "Service is busy. Please try again later.";
+
     log.error(errorMessage);
-    return buildErrorResponse(errorMessage, HttpStatus.SERVICE_UNAVAILABLE);
+
+    return buildErrorResponse(errorMessage, ex.getStatusCode());
   }
 
   @ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -69,7 +73,7 @@ public class GlobalExceptionHandler {
   }
 
   private ResponseEntity<HashMap<String, String>> buildErrorResponse(
-      String message, HttpStatus status) {
+      String message, HttpStatusCode status) {
     HashMap<String, String> response = new HashMap<>();
     response.put("Error", message);
 
