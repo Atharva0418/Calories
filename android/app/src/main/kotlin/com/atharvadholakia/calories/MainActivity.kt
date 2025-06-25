@@ -1,4 +1,4 @@
-package com.example.calories
+package com.atharvadholakia.calories
 
 import io.flutter.embedding.android.FlutterActivity
 
