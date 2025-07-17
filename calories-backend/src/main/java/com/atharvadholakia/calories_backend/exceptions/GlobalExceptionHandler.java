@@ -65,12 +65,12 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(errorMessage, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
-    String errorMessage = "Internal Server Error. Please try again later.";
-    log.error(errorMessage);
-    return buildErrorResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+  // @ExceptionHandler(Exception.class)
+  // public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
+  //   String errorMessage = "Internal Server Error. Please try again later.";
+  //   log.error(errorMessage);
+  //   return buildErrorResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+  // }
 
   private ResponseEntity<HashMap<String, String>> buildErrorResponse(
       String message, HttpStatusCode status) {
