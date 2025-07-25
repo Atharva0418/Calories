@@ -1,15 +1,17 @@
 package com.atharvadholakia.calories_backend.controller;
 
-import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
-import com.atharvadholakia.calories_backend.data.User;
-import com.atharvadholakia.calories_backend.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
+import com.atharvadholakia.calories_backend.data.UserResponseDTO;
+import com.atharvadholakia.calories_backend.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -22,8 +24,8 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<User> registerUser(@Valid @RequestBody SignupRequestDTO signupDTO) {
-    User registeredUser = userService.registerUser(signupDTO);
-    return new ResponseEntity<>(registeredUser, HttpStatus.OK);
+  @ResponseStatus(HttpStatus.CREATED) 
+  public UserResponseDTO registerUser(@Valid @RequestBody SignupRequestDTO signupDTO) {
+    return userService.registerUser(signupDTO) ;
   }
 }
