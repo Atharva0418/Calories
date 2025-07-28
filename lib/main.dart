@@ -1,10 +1,11 @@
-import 'package:calories/providers/nutrition_provider.dart';
-import 'package:calories/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
+import 'features/nutrition/providers/nutrition_provider.dart';
+import 'features/nutrition/screens/home_screen.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");

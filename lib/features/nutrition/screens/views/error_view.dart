@@ -1,7 +1,8 @@
-import 'package:calories/screens/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../widgets/back_button.dart';
 
 class ErrorView extends StatelessWidget {
   final String message;

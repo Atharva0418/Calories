@@ -1,11 +1,12 @@
 import 'dart:io';
 
-import 'package:calories/providers/nutrition_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/nutrition_provider.dart';
 
 class PickImageButton extends StatelessWidget {
   const PickImageButton({super.key});
