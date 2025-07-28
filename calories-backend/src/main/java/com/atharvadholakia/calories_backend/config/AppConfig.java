@@ -13,17 +13,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-public class WebClientConfig {
+public class AppConfig {
 
-  @Bean
-  public WebClient webClient() {
+    @Bean
+    public WebClient webClient() {
 
-    HttpClient httpClient = HttpClient.create().responseTimeout(Duration.ofSeconds(10));
+        HttpClient httpClient = HttpClient.create().responseTimeout(Duration.ofSeconds(10));
 
-    return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
-  }
+        return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+    }
 
-      @Bean
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())

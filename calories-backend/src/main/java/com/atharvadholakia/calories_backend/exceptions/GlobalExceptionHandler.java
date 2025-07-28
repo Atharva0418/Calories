@@ -1,15 +1,18 @@
 package com.atharvadholakia.calories_backend.exceptions;
 
 import java.util.HashMap;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
@@ -61,6 +64,15 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NotAFoodImageException.class)
   public ResponseEntity<?> handleNotAFoodImageExcpetion(NotAFoodImageException ex) {
     String errorMessage = "This is not a food image. Please upload an appropriate image.";
+    log.warn(errorMessage);
+    return buildErrorResponse(errorMessage, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<HashMap<String, String>> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException ex) {
+    //String errorMessage = "Invalid input. Please check the request body.";
+    String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
     log.warn(errorMessage);
     return buildErrorResponse(errorMessage, HttpStatus.BAD_REQUEST);
   }
