@@ -18,12 +18,15 @@ public class User {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
+  private String name;
+
   private String email;
 
   private String hashedPassword;
 
-  public User(String email, String hashedPassword) {
+  public User(String name, String email, String hashedPassword) {
     this.email = email;
     this.hashedPassword = hashedPassword;
+    this.name = name;
   }
 }

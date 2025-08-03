@@ -8,7 +8,10 @@ import com.atharvadholakia.calories_backend.data.User;
 import com.atharvadholakia.calories_backend.data.UserResponseDTO;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserService {
 
   private final UserRepository userRepository;
@@ -22,8 +25,9 @@ public class UserService {
 
   public UserResponseDTO registerUser(SignupRequestDTO signupDTO) {
 
-    User user = new User(signupDTO.getEmail(), passwordEncoder.encode(signupDTO.getPassword()));
+    User user = new User(signupDTO.getName(), signupDTO.getEmail(), passwordEncoder.encode(signupDTO.getPassword()));
     userRepository.save(user);
-    return new UserResponseDTO(user.getId(), user.getEmail());
+    log.info("User registered successfully: {}", user.getEmail());
+    return new UserResponseDTO(user.getName(), user.getId(), user.getEmail());
   }
 }
