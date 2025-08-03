@@ -72,7 +72,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<HashMap<String, String>> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException ex) {
     //String errorMessage = "Invalid input. Please check the request body.";
-    String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+    String errorMessage;
+    var fieldError = ex.getBindingResult().getFieldError();
+    if (fieldError != null) {
+      errorMessage = fieldError.getDefaultMessage();
+    } else {
+      errorMessage = "Invalid input. Please check the request body.";
+    }
     log.warn(errorMessage);
     return buildErrorResponse(errorMessage, HttpStatus.BAD_REQUEST);
   }
