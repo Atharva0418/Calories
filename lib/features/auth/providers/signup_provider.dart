@@ -13,7 +13,7 @@ class SignupProvider with ChangeNotifier {
 
   String? get errorMessage => _errorMessage;
 
-  Future<void> signup(SignupRequest request) async {
+  Future<bool> signup(SignupRequest request) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -21,27 +21,31 @@ class SignupProvider with ChangeNotifier {
     try {
       final url = Uri.parse('${dotenv.env['BASE_URL']}/api/signup');
 
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': request.name,
-          'email': request.email,
-          'password': request.password,
-        }),
-      );
+      final response = await http
+          .post(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': '${dotenv.env['X_API_KEY']}',
+            },
+            body: jsonEncode({
+              'name': request.name,
+              'email': request.email,
+              'password': request.password,
+            }),
+          )
+          .timeout(const Duration(seconds: 5));
 
-      if (response.statusCode == 200) {
-        print("Signup successful");
+      if (response.statusCode == 201) {
+        return true;
       } else {
         final data = jsonDecode(response.body);
         _errorMessage = data['error'] ?? "Signup Failed";
-      }
-      if (request.email == 'fail@example.com') {
-        throw Exception('Signup failed.');
+        return false;
       }
     } catch (e) {
       _errorMessage = e.toString();
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

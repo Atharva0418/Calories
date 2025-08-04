@@ -14,7 +14,7 @@ public class SignupRequestDTO {
   @NotBlank(message = "Name cannot be blank.")
   @Pattern(
       regexp = "^[a-zA-Z]{1,12}$",
-      message = "Name can be upto 12 characters and can only contain letters.")
+      message = "Name can be up to 12 characters and can only contain letters.")
   private String name;
 
   @NotBlank()

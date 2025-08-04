@@ -1,5 +1,9 @@
 import 'package:calories/features/auth/models/signup_request.dart';
 import 'package:calories/features/auth/providers/signup_provider.dart';
+import 'package:calories/features/auth/widgets/email_input.dart';
+import 'package:calories/features/auth/widgets/name_input.dart';
+import 'package:calories/features/auth/widgets/password_input.dart';
+import 'package:calories/features/nutrition/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -37,12 +41,21 @@ class _SignupFormState extends State<SignupForm> {
 
     final provider = context.read<SignupProvider>();
     final messenger = ScaffoldMessenger.of(context);
-    await provider.signup(request);
+    final success = await provider.signup(request);
 
-    if (provider.errorMessage != null) {
-      messenger.showSnackBar(SnackBar(content: Text(provider.errorMessage!)));
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
     } else {
-      messenger.showSnackBar(SnackBar(content: Text('Signup Successful')));
+      if (provider.errorMessage != null) {
+        messenger.showSnackBar(SnackBar(content: Text(provider.errorMessage!)));
+      } else {
+        messenger.showSnackBar(SnackBar(content: Text('Signup Successful')));
+      }
     }
   }
 
@@ -54,43 +67,11 @@ class _SignupFormState extends State<SignupForm> {
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: InputDecoration(labelText: 'Name'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Enter your name.';
-              }
-              return null;
-            },
-          ),
+          NameInput(controller: _nameController),
 
-          TextFormField(
-            controller: _emailController,
-            decoration: InputDecoration(labelText: 'Email'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Enter your email.';
-              }
-              if (!value.contains('@')) {
-                return 'Invalid Email.';
-              }
-              return null;
-            },
-          ),
+          EmailInput(controller: _emailController),
 
-          TextFormField(
-            controller: _passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
-            obscureText: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Enter your password.';
-              }
-
-              return null;
-            },
-          ),
+          PasswordInput(controller: _passwordController),
 
           SizedBox(height: 20.h),
 
