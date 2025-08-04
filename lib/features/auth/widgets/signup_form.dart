@@ -63,26 +63,50 @@ class _SignupFormState extends State<SignupForm> {
   Widget build(BuildContext context) {
     final provider = context.watch<SignupProvider>();
 
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          NameInput(controller: _nameController),
-
-          EmailInput(controller: _emailController),
-
-          PasswordInput(controller: _passwordController),
-
-          SizedBox(height: 20.h),
-
-          ElevatedButton(
-            onPressed: provider.isLoading ? null : _submit,
-            child:
-                provider.isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Sign Up'),
+    return Container(
+      width: 350.w,
+      height: 300.h,
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.w),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepOrange.withValues(alpha: 0.5),
+            blurRadius: 10.r,
+            offset: Offset(0, 4),
           ),
         ],
+      ),
+      child: Card(
+        elevation: 4,
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                NameInput(controller: _nameController),
+
+                EmailInput(controller: _emailController),
+
+                PasswordInput(controller: _passwordController),
+
+                SizedBox(height: 20.h),
+
+                ElevatedButton(
+                  onPressed: provider.isLoading ? null : _submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent,
+                    foregroundColor: Colors.white,
+                  ),
+                  child:
+                      provider.isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Sign Up'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

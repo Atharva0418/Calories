@@ -11,7 +11,7 @@ class NameInput extends StatelessWidget {
       controller: controller,
       decoration: const InputDecoration(labelText: "Name"),
       validator: (value) {
-        if (value == null || value.isEmpty) return 'Enter your name.';
+        if (value == null || value.isEmpty) return 'Enter your name.';git
 
         final regex = RegExp(r'^[a-zA-Z]{1,12}$');
 
