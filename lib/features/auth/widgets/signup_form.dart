@@ -6,6 +6,7 @@ import 'package:calories/features/auth/widgets/password_input.dart';
 import 'package:calories/features/nutrition/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class SignupForm extends StatefulWidget {
@@ -63,36 +64,43 @@ class _SignupFormState extends State<SignupForm> {
   Widget build(BuildContext context) {
     final provider = context.watch<SignupProvider>();
 
-    return Container(
-      width: 350.w,
-      height: 300.h,
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.w),
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.deepOrange.withValues(alpha: 0.5),
-            blurRadius: 10.r,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Card(
-        elevation: 4,
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                NameInput(controller: _nameController),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              SizedBox(height: 200.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Sign up",
+                    style: GoogleFonts.fredoka(
+                      fontSize: 40.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
 
-                EmailInput(controller: _emailController),
+              SizedBox(height: 20.h),
+              NameInput(controller: _nameController),
 
-                PasswordInput(controller: _passwordController),
+              SizedBox(height: 20.h),
+              EmailInput(controller: _emailController),
 
-                SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
+              PasswordInput(controller: _passwordController),
 
-                ElevatedButton(
+              SizedBox(height: 40.h),
+
+              SizedBox(
+                width: double.infinity,
+                height: 60.h,
+                child: ElevatedButton(
                   onPressed: provider.isLoading ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
@@ -101,10 +109,47 @@ class _SignupFormState extends State<SignupForm> {
                   child:
                       provider.isLoading
                           ? const CircularProgressIndicator()
-                          : const Text('Sign Up'),
+                          : const Text(
+                            'Sign Up',
+                            style: TextStyle(fontSize: 18),
+                          ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 30.h),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(fontSize: 16),
+                  ),
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.only(left: 5),
+                      minimumSize: Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      textStyle: TextStyle(color: Colors.orangeAccent),
+                    ),
+                    child: Text(
+                      "Sign in",
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.orangeAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

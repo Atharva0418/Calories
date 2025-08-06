@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
             colorSchemeSeed: Colors.blue,
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
-          home: SignupScreen(),
+          home: const SignupScreen(),
         );
       },
     );
