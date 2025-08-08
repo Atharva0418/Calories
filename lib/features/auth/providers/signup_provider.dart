@@ -8,14 +8,18 @@ import 'package:http/http.dart' as http;
 class SignupProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
+  Map<String, String> _fieldErrors = {};
 
   bool get isLoading => _isLoading;
 
   String? get errorMessage => _errorMessage;
 
+  Map<String, String> get fieldErrors => _fieldErrors;
+
   Future<bool> signup(SignupRequest request) async {
     _isLoading = true;
     _errorMessage = null;
+    _fieldErrors = {};
     notifyListeners();
 
     try {
@@ -29,7 +33,7 @@ class SignupProvider with ChangeNotifier {
               'x-api-key': '${dotenv.env['X_API_KEY']}',
             },
             body: jsonEncode({
-              'name': request.name,
+              'username': request.username,
               'email': request.email,
               'password': request.password,
             }),
@@ -40,7 +44,9 @@ class SignupProvider with ChangeNotifier {
         return true;
       } else {
         final data = jsonDecode(response.body);
-        _errorMessage = data['error'] ?? "Signup Failed";
+        if (data is Map<String, dynamic>) {
+          _fieldErrors = Map<String, String>.from(data);
+        }
         return false;
       }
     } catch (e) {

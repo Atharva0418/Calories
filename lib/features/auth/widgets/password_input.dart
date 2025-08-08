@@ -1,6 +1,8 @@
+import 'package:calories/features/auth/providers/signup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class PasswordInput extends StatelessWidget {
   final TextEditingController controller;
@@ -9,6 +11,7 @@ class PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final signupProvider = context.watch<SignupProvider>();
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -34,6 +37,7 @@ class PasswordInput extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.r),
         ),
         errorMaxLines: 3,
+        errorText: signupProvider.fieldErrors['password'],
       ),
       obscureText: true,
       validator: (value) {

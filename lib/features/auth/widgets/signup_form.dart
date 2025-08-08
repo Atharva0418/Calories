@@ -1,8 +1,8 @@
 import 'package:calories/features/auth/models/signup_request.dart';
 import 'package:calories/features/auth/providers/signup_provider.dart';
 import 'package:calories/features/auth/widgets/email_input.dart';
-import 'package:calories/features/auth/widgets/name_input.dart';
 import 'package:calories/features/auth/widgets/password_input.dart';
+import 'package:calories/features/auth/widgets/username_input.dart';
 import 'package:calories/features/nutrition/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,7 +35,7 @@ class _SignupFormState extends State<SignupForm> {
     if (!_formKey.currentState!.validate()) return;
 
     final request = SignupRequest(
-      name: _nameController.text.trim(),
+      username: _nameController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
     );
@@ -87,7 +87,7 @@ class _SignupFormState extends State<SignupForm> {
               ),
 
               SizedBox(height: 20.h),
-              NameInput(controller: _nameController),
+              UsernameInput(controller: _nameController),
 
               SizedBox(height: 20.h),
               EmailInput(controller: _emailController),

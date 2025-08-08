@@ -1,5 +1,6 @@
 package com.atharvadholakia.calories_backend.data;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,15 +19,16 @@ public class User {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  private String name;
+  private String username;
 
+  @Column(unique = true, nullable = false)
   private String email;
 
   private String hashedPassword;
 
-  public User(String name, String email, String hashedPassword) {
+  public User(String username, String email, String hashedPassword) {
     this.email = email;
     this.hashedPassword = hashedPassword;
-    this.name = name;
+    this.username = username;
   }
 }

@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SignupRequestDTO {
 
-  @NotBlank(message = "Name cannot be blank.")
+  @NotBlank(message = "Please enter a username.")
   @Pattern(
-      regexp = "^[a-zA-Z]{1,12}$",
-      message = "Name can be up to 12 characters and can only contain letters.")
-  private String name;
+      regexp = "^[a-zA-Z0-9]{1,12}$",
+      message = "Username can be up to 12 characters and can only contain letters and digits.")
+  private String username;
 
   @NotBlank()
   @Pattern(
-      regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      regexp = "^(?=.{1,254}$)([a-zA-Z0-9._%+-]{1,64})@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
       message = "Please use a valid email.") 
   private String email;
 
@@ -27,11 +27,11 @@ public class SignupRequestDTO {
   @Pattern(
       regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#!%*?&])[A-Za-z\\d@#$!%*?&]{8,27}$",
       message =
-          "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character and must be between 8 to 27 characters.")
+          "Password must have 8-27 characters, including uppercase, lowercase, number, and special character.")
   private String password;
 
-  public String getName() {
-    return this.name;
+  public String getUsername() {
+    return this.username;
   }
 
   public String getEmail() {

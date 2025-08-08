@@ -1,6 +1,8 @@
+import 'package:calories/features/auth/providers/signup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class EmailInput extends StatelessWidget {
   final TextEditingController controller;
@@ -9,6 +11,7 @@ class EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final signupProvider = context.watch<SignupProvider>();
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -19,6 +22,8 @@ class EmailInput extends StatelessWidget {
           fontSize: 14,
           textStyle: TextStyle(color: Colors.grey),
         ),
+        errorText: signupProvider.fieldErrors['email'],
+        errorMaxLines: 2,
         icon: Icon(Icons.email),
         contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         enabledBorder: OutlineInputBorder(
@@ -38,7 +43,7 @@ class EmailInput extends StatelessWidget {
         if (value == null || value.isEmpty) return 'Please enter your email.';
 
         final regex = RegExp(
-          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+          r'^(?=.{1,254}$)([a-zA-Z0-9._%+-]{1,64})@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$',
         );
 
         if (!regex.hasMatch(value)) return 'Please use a valid email.';

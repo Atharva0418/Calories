@@ -1,14 +1,18 @@
+import 'package:calories/features/auth/providers/signup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-class NameInput extends StatelessWidget {
+class UsernameInput extends StatelessWidget {
   final TextEditingController controller;
 
-  const NameInput({super.key, required this.controller});
+  const UsernameInput({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
+    final signupProvider = context.watch<SignupProvider>();
+
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -34,14 +38,18 @@ class NameInput extends StatelessWidget {
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
         ),
+        errorMaxLines: 2,
+        errorText: signupProvider.fieldErrors['username'],
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) return 'Please enter your name.';
+        if (value == null || value.isEmpty) {
+          return 'Please enter a username.';
+        }
 
-        final regex = RegExp(r'^[a-zA-Z]{1,12}$');
+        final regex = RegExp(r'^[a-zA-Z0-9]{1,12}$');
 
         if (!regex.hasMatch(value)) {
-          return 'Name can be up to 12 characters and only contain letters.';
+          return 'Name can be up to 12 characters and only contain letters and digits.';
         }
         return null;
       },
