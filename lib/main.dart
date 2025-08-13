@@ -1,11 +1,11 @@
 import 'package:calories/features/auth/providers/signup_provider.dart';
-import 'package:calories/features/auth/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'features/auth/screens/signup_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
 
 Future<void> main() async {

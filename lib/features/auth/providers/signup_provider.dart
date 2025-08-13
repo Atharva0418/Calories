@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:calories/features/auth/models/signup_request.dart';
@@ -38,7 +39,14 @@ class SignupProvider with ChangeNotifier {
               'password': request.password,
             }),
           )
-          .timeout(const Duration(seconds: 5));
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              throw TimeoutException(
+                "Request taking too long. Please try again later.",
+              );
+            },
+          );
 
       if (response.statusCode == 201) {
         return true;

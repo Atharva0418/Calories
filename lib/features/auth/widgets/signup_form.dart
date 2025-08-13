@@ -1,5 +1,6 @@
 import 'package:calories/features/auth/models/signup_request.dart';
 import 'package:calories/features/auth/providers/signup_provider.dart';
+import 'package:calories/features/auth/screens/signup_success_screen.dart';
 import 'package:calories/features/auth/widgets/email_input.dart';
 import 'package:calories/features/auth/widgets/password_input.dart';
 import 'package:calories/features/auth/widgets/username_input.dart';
@@ -7,6 +8,7 @@ import 'package:calories/features/nutrition/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class SignupForm extends StatefulWidget {
@@ -49,13 +51,11 @@ class _SignupFormState extends State<SignupForm> {
     if (success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const SignupSuccessScreen()),
       );
     } else {
       if (provider.errorMessage != null) {
         messenger.showSnackBar(SnackBar(content: Text(provider.errorMessage!)));
-      } else {
-        messenger.showSnackBar(SnackBar(content: Text('Signup Successful')));
       }
     }
   }
@@ -100,20 +100,34 @@ class _SignupFormState extends State<SignupForm> {
               SizedBox(
                 width: double.infinity,
                 height: 60.h,
-                child: ElevatedButton(
-                  onPressed: provider.isLoading ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
-                    foregroundColor: Colors.white,
-                  ),
-                  child:
-                      provider.isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text(
+                child:
+                    provider.isLoading
+                        ? Center(
+                          child: Lottie.asset(
+                            'assets/animations/SearchingFood_colored.json',
+                            delegates: LottieDelegates(
+                              values: [
+                                ValueDelegate.color([
+                                  '**',
+                                ], value: Colors.orangeAccent),
+                              ],
+                            ),
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                        : ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orangeAccent,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text(
                             'Sign Up',
                             style: TextStyle(fontSize: 18),
                           ),
-                ),
+                        ),
               ),
               SizedBox(height: 30.h),
 

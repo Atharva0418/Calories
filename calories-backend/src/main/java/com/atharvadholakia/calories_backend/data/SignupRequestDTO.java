@@ -25,7 +25,7 @@ public class SignupRequestDTO {
 
   @NotBlank()
   @Pattern(
-      regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#!%*?&])[A-Za-z\\d@#$!%*?&]{8,27}$",
+      regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#_!%*?&])[A-Za-z\\d@#$!_%*?&]{8,27}$",
       message =
           "Password must have 8-27 characters, including uppercase, lowercase, number, and special character.")
   private String password;
