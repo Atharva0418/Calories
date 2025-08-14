@@ -1,4 +1,4 @@
-import 'package:calories/features/auth/providers/signup_provider.dart';
+import 'package:calories/features/auth/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +18,7 @@ class _PasswordInputState extends State<PasswordInput> {
 
   @override
   Widget build(BuildContext context) {
-    final signupProvider = context.watch<SignupProvider>();
+    final signupProvider = context.watch<AuthProvider>();
     return TextFormField(
       controller: widget.controller,
       decoration: InputDecoration(
