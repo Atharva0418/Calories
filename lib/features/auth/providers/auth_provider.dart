@@ -72,7 +72,7 @@ class AuthProvider with ChangeNotifier {
     _errorMessage = null;
     _fieldErrors = {};
     notifyListeners();
-    return true;
+
     try {
       final url = Uri.parse('${dotenv.env['BASE_URL']}/api/login');
 

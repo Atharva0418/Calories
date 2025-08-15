@@ -87,37 +87,35 @@ class _LoginFormState extends State<LoginForm> {
               PasswordInput(controller: _passwordController),
 
               SizedBox(height: 40.h),
-              SizedBox(
-                height: 60.h,
-                width: double.infinity,
-                child:
-                    loginProvider.isLoading
-                        ? Center(
-                          child: Lottie.asset(
-                            'assets/animations/SearchingFood_colored.json',
-                            delegates: LottieDelegates(
-                              values: [
-                                ValueDelegate.color([
-                                  '**',
-                                ], value: Colors.orangeAccent),
-                              ],
-                            ),
-                            width: 150,
-                            height: 150,
-                            fit: BoxFit.contain,
-                          ),
-                        )
-                        : ElevatedButton(
-                          onPressed: () {
-                            _submit();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orangeAccent,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: Text("Log in", style: TextStyle(fontSize: 18)),
-                        ),
-              ),
+
+              loginProvider.isLoading
+                  ? Center(
+                    child: Lottie.asset(
+                      'assets/animations/SearchingFood_colored.json',
+                      delegates: LottieDelegates(
+                        values: [
+                          ValueDelegate.color([
+                            '**',
+                          ], value: Colors.orangeAccent),
+                        ],
+                      ),
+                      height: 80.h,
+                    ),
+                  )
+                  : SizedBox(
+                    height: 60.h,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _submit();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text("Log in", style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
 
               SizedBox(height: 30.h),
 

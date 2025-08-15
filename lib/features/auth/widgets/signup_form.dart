@@ -99,38 +99,34 @@ class _SignupFormState extends State<SignupForm> {
 
               SizedBox(height: 40.h),
 
-              SizedBox(
-                width: double.infinity,
-                height: 60.h,
-                child:
-                    signupProvider.isLoading
-                        ? Center(
-                          child: Lottie.asset(
-                            'assets/animations/SearchingFood_colored.json',
-                            delegates: LottieDelegates(
-                              values: [
-                                ValueDelegate.color([
-                                  '**',
-                                ], value: Colors.orangeAccent),
-                              ],
-                            ),
-                            width: 150,
-                            height: 150,
-                            fit: BoxFit.contain,
-                          ),
-                        )
-                        : ElevatedButton(
-                          onPressed: _submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orangeAccent,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-              ),
+              signupProvider.isLoading
+                  ? Center(
+                    child: Lottie.asset(
+                      'assets/animations/SearchingFood_colored.json',
+                      delegates: LottieDelegates(
+                        values: [
+                          ValueDelegate.color([
+                            '**',
+                          ], value: Colors.orangeAccent),
+                        ],
+                      ),
+                      height: 80.h,
+                    ),
+                  )
+                  : SizedBox(
+                    height: 60.h,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _submit();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text("Sign up", style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
               SizedBox(height: 30.h),
 
               Row(
