@@ -1,8 +1,11 @@
 package com.atharvadholakia.calories_backend.controller;
 
 import com.atharvadholakia.calories_backend.data.LoginRequestDTO;
+import com.atharvadholakia.calories_backend.data.RefreshTokenRequest;
 import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
+import com.atharvadholakia.calories_backend.data.TokenResponse;
 import com.atharvadholakia.calories_backend.data.UserResponseDTO;
+import com.atharvadholakia.calories_backend.security.JwtUtil;
 import com.atharvadholakia.calories_backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class UserController {
 
   private final UserService userService;
@@ -31,11 +34,26 @@ public class UserController {
 
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> authenticateUser(@Valid @RequestBody LoginRequestDTO loginDTO) {
+  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginDTO) {
     boolean isAuthenticated = userService.authenticateLogin(loginDTO);
-    if (!isAuthenticated) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
+    if (isAuthenticated) {
+      String accessToken = JwtUtil.generateAccessToken(loginDTO.getEmail());
+      String refreshToken = JwtUtil.generateRefreshToken(loginDTO.getEmail());
+      return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken), HttpStatus.OK);
     }
-    return new ResponseEntity<>("Login Successful!", HttpStatus.OK);
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
+  }
+
+  @PostMapping("/refresh-token")
+  public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+    String refreshToken = tokenRequest.getRefreshToken();
+    if (JwtUtil.validateToken(refreshToken)) {
+      String email = JwtUtil.extractEmailFromToken(refreshToken);
+      String newAccessToken = JwtUtil.generateAccessToken(email);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new TokenResponse(newAccessToken, refreshToken));
+    }
+
+    return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
   }
 }
