@@ -22,7 +22,10 @@ public class UserController {
 
   private final UserService userService;
 
-  public UserController(UserService userService) {
+  private final JwtUtil jwtUtil;
+
+  public UserController(UserService userService, JwtUtil jwtUtil) {
+    this.jwtUtil = jwtUtil;
     this.userService = userService;
   }
 
@@ -37,8 +40,8 @@ public class UserController {
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginDTO) {
     boolean isAuthenticated = userService.authenticateLogin(loginDTO);
     if (isAuthenticated) {
-      String accessToken = JwtUtil.generateAccessToken(loginDTO.getEmail());
-      String refreshToken = JwtUtil.generateRefreshToken(loginDTO.getEmail());
+      String accessToken = jwtUtil.generateAccessToken(loginDTO.getEmail());
+      String refreshToken = jwtUtil.generateRefreshToken(loginDTO.getEmail());
       return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken), HttpStatus.OK);
     }
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
@@ -47,9 +50,9 @@ public class UserController {
   @PostMapping("/refresh-token")
   public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
     String refreshToken = tokenRequest.getRefreshToken();
-    if (JwtUtil.validateToken(refreshToken)) {
-      String email = JwtUtil.extractEmailFromToken(refreshToken);
-      String newAccessToken = JwtUtil.generateAccessToken(email);
+    if (jwtUtil.validateToken(refreshToken)) {
+      String email = jwtUtil.extractEmailFromToken(refreshToken);
+      String newAccessToken = jwtUtil.generateAccessToken(email);
       return ResponseEntity.status(HttpStatus.OK)
           .body(new TokenResponse(newAccessToken, refreshToken));
     }

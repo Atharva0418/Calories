@@ -21,6 +21,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final UserRepository userRepository;
 
+  private final JwtUtil jwtUtil;
+
   @Override
   protected void doFilterInternal(
       @NonNull HttpServletRequest request,
@@ -34,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       String token = authHeader.substring(7);
 
       try {
-        String email = JwtUtil.extractEmailFromToken(token);
+        String email = jwtUtil.extractEmailFromToken(token);
         userRepository
             .findByEmail(email)
             .ifPresent(

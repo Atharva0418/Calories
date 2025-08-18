@@ -6,13 +6,22 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JwtUtil {
 
-  private static final String SECRET = "V9vAllIpu6TfN2B3z7eAc9RwVhQ8mX1a+0X4U2rT6sW=";
-  private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+  @Value("${SECRET_TOKEN_KEY}")
+  private String SECRET;
 
-  public static String generateAccessToken(String email) {
+  private final Key key;
+
+  public JwtUtil(@Value("${SECRET_TOKEN_KEY}") String SECRET) {
+    key = Keys.hmacShaKeyFor(SECRET.getBytes());
+  }
+
+  public String generateAccessToken(String email) {
     return Jwts.builder()
         .setSubject(email)
         .setIssuedAt(new Date())
@@ -21,7 +30,7 @@ public class JwtUtil {
         .compact();
   }
 
-  public static String generateRefreshToken(String email) {
+  public String generateRefreshToken(String email) {
     return Jwts.builder()
         .setSubject(email)
         .setIssuedAt(new Date())
@@ -30,7 +39,7 @@ public class JwtUtil {
         .compact();
   }
 
-  public static boolean validateToken(String token) {
+  public boolean validateToken(String token) {
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
@@ -39,7 +48,7 @@ public class JwtUtil {
     }
   }
 
-  public static String extractEmailFromToken(String token) {
+  public String extractEmailFromToken(String token) {
     return Jwts.parserBuilder()
         .setSigningKey(key)
         .build()
