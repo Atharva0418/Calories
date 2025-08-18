@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:calories/features/auth/providers/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +12,10 @@ import '../models/nutrition_info.dart';
 import '../models/screen_state.dart';
 
 class NutritionProvider with ChangeNotifier {
+  final AuthProvider authProvider;
+
+  NutritionProvider({required this.authProvider});
+
   ScreenState _state = ScreenState.idle;
 
   ScreenState? get state => _state;
@@ -46,27 +51,36 @@ class NutritionProvider with ChangeNotifier {
     if (_imageFile == null) return;
 
     try {
-      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/predict-nutrients');
-      final request =
-          http.MultipartRequest('POST', uri)
-            ..files.add(
-              await http.MultipartFile.fromPath(
-                'imageFile',
-                _imageFile!.path,
-                filename: basename(_imageFile!.path),
-              ),
-            )
-            ..headers.addAll({'x-api-key': '${dotenv.env['X_API_KEY']}'});
+      final response = await authProvider.authenticatedRequest((
+        accessToken,
+      ) async {
+        final uri = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/predict-nutrients',
+        );
+        final request =
+            http.MultipartRequest('POST', uri)
+              ..files.add(
+                await http.MultipartFile.fromPath(
+                  'imageFile',
+                  _imageFile!.path,
+                  filename: basename(_imageFile!.path),
+                ),
+              )
+              ..headers.addAll({
+                'x-api-key': '${dotenv.env['X_API_KEY']}',
+                'Authorization': 'Bearer $accessToken',
+              });
 
-      final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 15),
-        onTimeout: () {
-          _setError("Request taking too long. Please try again later.");
-          throw TimeoutException("Timed out");
-        },
-      );
+        final streamedResponse = await request.send().timeout(
+          const Duration(seconds: 15),
+          onTimeout: () {
+            _setError("Request taking too long. Please try again later.");
+            throw TimeoutException("Timed out");
+          },
+        );
 
-      final response = await http.Response.fromStream(streamedResponse);
+        return await http.Response.fromStream(streamedResponse);
+      });
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);

@@ -13,8 +13,13 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => NutritionProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, NutritionProvider>(
+          create:
+              (auth) =>
+                  NutritionProvider(authProvider: auth.read<AuthProvider>()),
+          update: (_, __, ___) => ___!,
+        ),
       ],
       child: const MyApp(),
     ),

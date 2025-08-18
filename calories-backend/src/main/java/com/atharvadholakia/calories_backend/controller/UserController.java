@@ -53,8 +53,9 @@ public class UserController {
     if (jwtUtil.validateToken(refreshToken)) {
       String email = jwtUtil.extractEmailFromToken(refreshToken);
       String newAccessToken = jwtUtil.generateAccessToken(email);
+      String newRefreshToken = jwtUtil.generateRefreshToken(email);
       return ResponseEntity.status(HttpStatus.OK)
-          .body(new TokenResponse(newAccessToken, refreshToken));
+          .body(new TokenResponse(newAccessToken, newRefreshToken));
     }
 
     return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
