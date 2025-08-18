@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-  @Value("${SECRET_TOKEN_KEY}")
-  private String SECRET;
-
   private final Key key;
 
   public JwtUtil(@Value("${SECRET_TOKEN_KEY}") String SECRET) {
