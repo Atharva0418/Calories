@@ -129,6 +129,7 @@ class _LoginFormState extends State<LoginForm> {
 
                   TextButton(
                     onPressed: () {
+                      loginProvider.fieldErrors.clear();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => SignupScreen()),

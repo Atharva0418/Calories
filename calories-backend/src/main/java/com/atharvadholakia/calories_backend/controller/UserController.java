@@ -30,9 +30,14 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  @ResponseStatus(HttpStatus.CREATED)
-  public UserResponseDTO registerUser(@Valid @RequestBody SignupRequestDTO signupDTO) {
-    return userService.registerUser(signupDTO);
+  public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDTO signupDTO) {
+    boolean isRegistered = userService.registerUser(signupDTO);
+    if (isRegistered) {
+      String accessToken = jwtUtil.generateAccessToken(signupDTO.getEmail());
+      String refreshToken = jwtUtil.generateRefreshToken(signupDTO.getEmail());
+      return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken), HttpStatus.CREATED);
+    }
+    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @PostMapping("/login")
@@ -44,7 +49,7 @@ public class UserController {
       String refreshToken = jwtUtil.generateRefreshToken(loginDTO.getEmail());
       return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken), HttpStatus.OK);
     }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
+    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
   }
 
   @PostMapping("/refresh-token")

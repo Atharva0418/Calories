@@ -10,6 +10,30 @@ import 'package:http/http.dart' as http;
 
 class AuthProvider with ChangeNotifier {
   final _secureStorage = FlutterSecureStorage();
+
+  bool _isAuthenticated = false;
+
+  bool get isAuthenticated => _isAuthenticated;
+
+  Future<void> checkLoggedIn() async {
+    final refreshToken = _secureStorage.read(key: 'refreshToken');
+    if (refreshToken == null) {
+      _isAuthenticated = false;
+      return;
+    }
+
+    final checkRefreshToken = await refreshAccessToken();
+    if (checkRefreshToken) {
+      _isAuthenticated = true;
+    } else {
+      _isAuthenticated = false;
+      _secureStorage.delete(key: 'accessToken');
+      _secureStorage.delete(key: 'refreshToken');
+    }
+
+    notifyListeners();
+  }
+
   bool _isLoading = false;
   String? _errorMessage;
   Map<String, String> _fieldErrors = {};
@@ -52,6 +76,9 @@ class AuthProvider with ChangeNotifier {
           );
 
       if (signupResponse.statusCode == 201) {
+        final data = jsonDecode(signupResponse.body);
+        _secureStorage.write(key: 'accessToken', value: data['accessToken']);
+        _secureStorage.write(key: 'refreshToken', value: data['refreshToken']);
         return true;
       } else {
         final data = jsonDecode(signupResponse.body);
