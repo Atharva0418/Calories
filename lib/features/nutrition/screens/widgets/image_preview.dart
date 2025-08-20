@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:calories/screens/widgets/pick_image_button.dart';
+import 'package:calories/features/nutrition/screens/widgets/pick_image_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';

@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:calories/models/nutrition_info.dart';
-import 'package:calories/models/screen_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+
+import '../models/nutrition_info.dart';
+import '../models/screen_state.dart';
 
 class NutritionProvider with ChangeNotifier {
   ScreenState _state = ScreenState.idle;

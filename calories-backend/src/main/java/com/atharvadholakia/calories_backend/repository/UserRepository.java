@@ -1,6 +1,12 @@
 package com.atharvadholakia.calories_backend.repository;
 
-import com.atharvadholakia.calories_backend.data.User;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, String> {}
+import com.atharvadholakia.calories_backend.data.User;
+
+public interface UserRepository extends JpaRepository<User, String> {
+
+    Optional<User> findByEmail(String email);
+}

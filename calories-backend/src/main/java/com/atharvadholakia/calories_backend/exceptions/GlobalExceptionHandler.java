@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -71,24 +72,36 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<HashMap<String, String>> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException ex) {
-    //String errorMessage = "Invalid input. Please check the request body.";
-    String errorMessage;
-    var fieldError = ex.getBindingResult().getFieldError();
-    if (fieldError != null) {
-      errorMessage = fieldError.getDefaultMessage();
-    } else {
-      errorMessage = "Invalid input. Please check the request body.";
-    }
-    log.warn(errorMessage);
-    return buildErrorResponse(errorMessage, HttpStatus.BAD_REQUEST);
+
+    HashMap<String, String> allErrors = new HashMap<>();
+
+    ex.getBindingResult().getAllErrors().forEach((error) -> {
+      String fieldName = ((FieldError)error).getField();
+      String message = error.getDefaultMessage();
+
+      allErrors.put(fieldName, message);
+    });
+
+    log.warn("Validation error: {}", allErrors);
+    return new ResponseEntity<>(allErrors, HttpStatus.BAD_REQUEST);
   }
 
-  // @ExceptionHandler(Exception.class)
-  // public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
-  //   String errorMessage = "Internal Server Error. Please try again later.";
-  //   log.error(errorMessage);
-  //   return buildErrorResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
-  // }
+  @ExceptionHandler(EmailAlreadyExistsException.class)
+  public ResponseEntity<HashMap<String, String>> handleEmailAlreadyExistsException(
+      EmailAlreadyExistsException ex) {
+    String errorMessage = "Email already registered. Please use a different email.";
+    HashMap<String, String> response = new HashMap<>();
+    response.put("email", errorMessage);
+    log.warn(errorMessage);
+    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<HashMap<String, String>> handleGenericException(Exception ex) {
+    String errorMessage = "Internal Server Error. Please try again later.";
+    log.error(errorMessage);
+    return buildErrorResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 
   private ResponseEntity<HashMap<String, String>> buildErrorResponse(
       String message, HttpStatusCode status) {

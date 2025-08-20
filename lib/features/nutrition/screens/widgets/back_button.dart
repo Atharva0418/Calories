@@ -1,6 +1,7 @@
-import 'package:calories/providers/nutrition_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/nutrition_provider.dart';
 
 class GoBackButton extends StatelessWidget {
   const GoBackButton({super.key});

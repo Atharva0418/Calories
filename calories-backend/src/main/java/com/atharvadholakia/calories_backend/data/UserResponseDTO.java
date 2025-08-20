@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UserResponseDTO {
-    private String name;
+    private String username;
     private String Id;
     private String email;
 
-    public UserResponseDTO(String name,String id, String email) {
+    public UserResponseDTO(String username,String id, String email) {
         this.Id = id;
         this.email = email;
-        this.name = name;
+        this.username = username;
     }
 }
