@@ -27,8 +27,8 @@ class AuthProvider with ChangeNotifier {
       _isAuthenticated = true;
     } else {
       _isAuthenticated = false;
-      _secureStorage.delete(key: 'accessToken');
-      _secureStorage.delete(key: 'refreshToken');
+      await _secureStorage.delete(key: 'accessToken');
+      await _secureStorage.delete(key: 'refreshToken');
     }
 
     notifyListeners();
@@ -67,7 +67,7 @@ class AuthProvider with ChangeNotifier {
             }),
           )
           .timeout(
-            const Duration(seconds: 5),
+            const Duration(seconds: 10),
             onTimeout: () {
               throw TimeoutException(
                 "Request taking too long. Please try again later.",
@@ -77,8 +77,14 @@ class AuthProvider with ChangeNotifier {
 
       if (signupResponse.statusCode == 201) {
         final data = jsonDecode(signupResponse.body);
-        _secureStorage.write(key: 'accessToken', value: data['accessToken']);
-        _secureStorage.write(key: 'refreshToken', value: data['refreshToken']);
+        await _secureStorage.write(
+          key: 'accessToken',
+          value: data['accessToken'],
+        );
+        await _secureStorage.write(
+          key: 'refreshToken',
+          value: data['refreshToken'],
+        );
         return true;
       } else {
         final data = jsonDecode(signupResponse.body);
@@ -118,7 +124,7 @@ class AuthProvider with ChangeNotifier {
             }),
           )
           .timeout(
-            const Duration(seconds: 5),
+            const Duration(seconds: 10),
             onTimeout: () {
               throw TimeoutException(
                 "Request taking too long. Please try again later.",
@@ -128,8 +134,14 @@ class AuthProvider with ChangeNotifier {
 
       if (loginResponse.statusCode == 200) {
         final data = jsonDecode(loginResponse.body);
-        _secureStorage.write(key: 'accessToken', value: data['accessToken']);
-        _secureStorage.write(key: 'refreshToken', value: data['refreshToken']);
+        await _secureStorage.write(
+          key: 'accessToken',
+          value: data['accessToken'],
+        );
+        await _secureStorage.write(
+          key: 'refreshToken',
+          value: data['refreshToken'],
+        );
         return true;
       } else {
         final data = jsonDecode(loginResponse.body);
@@ -199,10 +211,18 @@ class AuthProvider with ChangeNotifier {
         accessToken = await getAccessToken();
         response = await requestFn(accessToken!);
       } else {
-        //logout
+        await logout();
+        notifyListeners();
       }
     }
 
     return response;
+  }
+
+  Future<void> logout() async {
+    await _secureStorage.delete(key: 'accessToken');
+    await _secureStorage.delete(key: 'refreshToken');
+    _isAuthenticated = false;
+    notifyListeners();
   }
 }
