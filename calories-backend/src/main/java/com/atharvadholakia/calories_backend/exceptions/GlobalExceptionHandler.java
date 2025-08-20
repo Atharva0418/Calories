@@ -1,10 +1,11 @@
 package com.atharvadholakia.calories_backend.exceptions;
 
 import java.util.HashMap;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
@@ -75,12 +74,15 @@ public class GlobalExceptionHandler {
 
     HashMap<String, String> allErrors = new HashMap<>();
 
-    ex.getBindingResult().getAllErrors().forEach((error) -> {
-      String fieldName = ((FieldError)error).getField();
-      String message = error.getDefaultMessage();
+    ex.getBindingResult()
+        .getAllErrors()
+        .forEach(
+            (error) -> {
+              String fieldName = ((FieldError) error).getField();
+              String message = error.getDefaultMessage();
 
-      allErrors.put(fieldName, message);
-    });
+              allErrors.put(fieldName, message);
+            });
 
     log.warn("Validation error: {}", allErrors);
     return new ResponseEntity<>(allErrors, HttpStatus.BAD_REQUEST);
@@ -92,6 +94,16 @@ public class GlobalExceptionHandler {
     String errorMessage = "Email already registered. Please use a different email.";
     HashMap<String, String> response = new HashMap<>();
     response.put("email", errorMessage);
+    log.warn(errorMessage);
+    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<HashMap<String, String>> handleBadCredentialsException(
+      BadCredentialsException ex) {
+    String errorMessage = ex.getMessage();
+    HashMap<String, String> response = new HashMap<>();
+    response.put("password", errorMessage);
     log.warn(errorMessage);
     return new ResponseEntity<>(response, HttpStatus.CONFLICT);
   }

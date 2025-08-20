@@ -6,6 +6,8 @@ import com.atharvadholakia.calories_backend.service.CaloriesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +28,8 @@ public class CaloriesController {
 
   @PostMapping("/predict-nutrients")
   public ResponseEntity<Nutrition> analyzeNutrition(
-      @RequestParam("imageFile") MultipartFile imageFile) {
+      @RequestParam("imageFile") MultipartFile imageFile,
+      @AuthenticationPrincipal UserDetails userDetails) {
 
     if (!caloriesService.isValidImage(imageFile)) throw new InvalidImageException();
     log.info("Calling service to analyze image.");
