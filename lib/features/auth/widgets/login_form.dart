@@ -1,62 +1,58 @@
-import 'package:calories/features/auth/models/signup_request.dart';
+import 'package:calories/features/auth/models/login_request.dart';
 import 'package:calories/features/auth/providers/auth_provider.dart';
-import 'package:calories/features/auth/screens/login_screen.dart';
-import 'package:calories/features/auth/screens/signup_success_screen.dart';
+import 'package:calories/features/auth/screens/login_success_screen.dart';
+import 'package:calories/features/auth/screens/signup_screen.dart';
 import 'package:calories/features/auth/widgets/email_input.dart';
 import 'package:calories/features/auth/widgets/password_input.dart';
-import 'package:calories/features/auth/widgets/username_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-class SignupForm extends StatefulWidget {
-  const SignupForm({super.key});
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
 
   @override
-  State<SignupForm> createState() => _SignupFormState();
+  State<LoginForm> createState() => _LoginFormState();
 }
 
-class _SignupFormState extends State<SignupForm> {
+class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _nameController.dispose();
+    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    super.dispose();
   }
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final request = SignupRequest(
-      username: _nameController.text.trim(),
+    final loginRequest = LoginRequest(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
     );
 
-    final signupProvider = context.read<AuthProvider>();
+    final loginProvider = context.read<AuthProvider>();
     final messenger = ScaffoldMessenger.of(context);
-    final success = await signupProvider.signup(request);
+    final success = await loginProvider.login(loginRequest);
 
     if (!mounted) return;
 
     if (success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const SignupSuccessScreen()),
+        MaterialPageRoute(builder: (_) => LoginSuccessScreen()),
       );
     } else {
-      if (signupProvider.errorMessage != null) {
+      if (loginProvider.errorMessage != null) {
         messenger.showSnackBar(
-          SnackBar(content: Text(signupProvider.errorMessage!)),
+          SnackBar(content: Text(loginProvider.errorMessage!)),
         );
       }
     }
@@ -64,32 +60,25 @@ class _SignupFormState extends State<SignupForm> {
 
   @override
   Widget build(BuildContext context) {
-    final signupProvider = context.watch<AuthProvider>();
+    final loginProvider = context.watch<AuthProvider>();
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
-        child: Form(
-          key: _formKey,
+      child: Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 200.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "Sign up",
-                    style: GoogleFonts.fredoka(
-                      fontSize: 40.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
+              Text(
+                "Log in",
+                style: GoogleFonts.fredoka(
+                  fontSize: 40.sp,
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
-
-              SizedBox(height: 20.h),
-              UsernameInput(controller: _nameController),
 
               SizedBox(height: 20.h),
               EmailInput(controller: _emailController),
@@ -99,7 +88,7 @@ class _SignupFormState extends State<SignupForm> {
 
               SizedBox(height: 40.h),
 
-              signupProvider.isLoading
+              loginProvider.isLoading
                   ? Center(
                     child: Lottie.asset(
                       'assets/animations/SearchingFood_colored.json',
@@ -124,16 +113,17 @@ class _SignupFormState extends State<SignupForm> {
                         backgroundColor: Colors.orangeAccent,
                         foregroundColor: Colors.white,
                       ),
-                      child: Text("Sign up", style: TextStyle(fontSize: 18)),
+                      child: Text("Log in", style: TextStyle(fontSize: 18)),
                     ),
                   ),
+
               SizedBox(height: 30.h),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Already have an account?",
+                    "Don't have an account?",
                     style: TextStyle(fontSize: 16),
                   ),
 
@@ -141,7 +131,7 @@ class _SignupFormState extends State<SignupForm> {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        MaterialPageRoute(builder: (context) => SignupScreen()),
                       );
                     },
                     style: TextButton.styleFrom(
@@ -151,7 +141,7 @@ class _SignupFormState extends State<SignupForm> {
                       textStyle: TextStyle(color: Colors.orangeAccent),
                     ),
                     child: Text(
-                      "Log in",
+                      "Sign up",
                       style: TextStyle(
                         fontSize: 17,
                         color: Colors.orangeAccent,

@@ -1,18 +1,17 @@
+import 'package:calories/features/nutrition/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../nutrition/screens/home_screen.dart';
-
-class SignupSuccessScreen extends StatefulWidget {
-  const SignupSuccessScreen({super.key});
+class LoginSuccessScreen extends StatefulWidget {
+  const LoginSuccessScreen({super.key});
 
   @override
-  State<SignupSuccessScreen> createState() => _SignupSuccessScreenState();
+  State<LoginSuccessScreen> createState() => _LoginSuccessScreenState();
 }
 
-class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
+class _LoginSuccessScreenState extends State<LoginSuccessScreen> {
   @override
   void initState() {
     super.initState();
@@ -45,7 +44,7 @@ class _SignupSuccessScreenState extends State<SignupSuccessScreen> {
             ),
 
             Text(
-              "You're officially on the menu 🍽️",
+              "Welcome back, chef! 👨‍🍳",
               style: GoogleFonts.baloo2(fontSize: 24),
             ),
           ],
