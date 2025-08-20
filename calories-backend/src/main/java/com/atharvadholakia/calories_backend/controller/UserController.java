@@ -4,10 +4,10 @@ import com.atharvadholakia.calories_backend.data.LoginRequestDTO;
 import com.atharvadholakia.calories_backend.data.RefreshTokenRequest;
 import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
 import com.atharvadholakia.calories_backend.data.TokenResponse;
-import com.atharvadholakia.calories_backend.data.UserResponseDTO;
 import com.atharvadholakia.calories_backend.security.JwtUtil;
 import com.atharvadholakia.calories_backend.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class UserController {
 
   private final UserService userService;
@@ -55,14 +56,16 @@ public class UserController {
   @PostMapping("/refresh-token")
   public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
     String refreshToken = tokenRequest.getRefreshToken();
+    log.info("Received refresh token: {}");
     if (jwtUtil.validateToken(refreshToken)) {
       String email = jwtUtil.extractEmailFromToken(refreshToken);
       String newAccessToken = jwtUtil.generateAccessToken(email);
       String newRefreshToken = jwtUtil.generateRefreshToken(email);
+      log.info("Generated new access token and refresh token for email: {}", email);
       return ResponseEntity.status(HttpStatus.OK)
           .body(new TokenResponse(newAccessToken, newRefreshToken));
     }
-
+    log.warn("Invalid refresh token.");
     return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
   }
 }

@@ -3,7 +3,6 @@ package com.atharvadholakia.calories_backend.service;
 import com.atharvadholakia.calories_backend.data.LoginRequestDTO;
 import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
 import com.atharvadholakia.calories_backend.data.User;
-import com.atharvadholakia.calories_backend.data.UserResponseDTO;
 import com.atharvadholakia.calories_backend.exceptions.EmailAlreadyExistsException;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
 import java.util.Optional;
@@ -51,7 +50,7 @@ public class UserService {
     }
 
     if (!passwordEncoder.matches(loginDTO.getPassword(), User.get().getHashedPassword())) {
-      log.warn("Authentication failed: Incorrect password for email {}", loginDTO.getEmail());
+      log.warn("Authentication failed for email {}", loginDTO.getEmail());
       throw new BadCredentialsException("Invalid credentials.");
     }
 
