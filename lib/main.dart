@@ -1,6 +1,6 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
-import 'package:calories/features/auth/screens/signup_screen.dart';
-import 'package:calories/features/nutrition/screens/home_screen.dart';
+import 'package:calories/features/chat/provider/chat_provider.dart';
+import 'package:calories/features/chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +25,7 @@ Future<void> main() async {
                   NutritionProvider(authProvider: auth.read<AuthProvider>()),
           update: (_, __, ___) => ___!,
         ),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: const MyApp(),
     ),
@@ -50,9 +51,10 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
           home:
-              authProvider.isAuthenticated
-                  ? const HomeScreen()
-                  : const SignupScreen(),
+              // authProvider.isAuthenticated
+              //     ? const HomeScreen()
+              //     : const SignupScreen(),
+              ChatScreen(),
         );
       },
     );
