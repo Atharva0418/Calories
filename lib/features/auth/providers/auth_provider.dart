@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthProvider with ChangeNotifier {
   final _secureStorage = FlutterSecureStorage();
@@ -14,25 +15,6 @@ class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
-
-  Future<void> checkLoggedIn() async {
-    final refreshToken = _secureStorage.read(key: 'refreshToken');
-    if (refreshToken == null) {
-      _isAuthenticated = false;
-      return;
-    }
-
-    final checkRefreshToken = await refreshAccessToken();
-    if (checkRefreshToken) {
-      _isAuthenticated = true;
-    } else {
-      _isAuthenticated = false;
-      await _secureStorage.delete(key: 'accessToken');
-      await _secureStorage.delete(key: 'refreshToken');
-    }
-
-    notifyListeners();
-  }
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -217,6 +199,31 @@ class AuthProvider with ChangeNotifier {
     }
 
     return response;
+  }
+
+  Future<void> checkLoggedIn() async {
+    final accessToken = await _secureStorage.read(key: 'accessToken');
+    final refreshToken = await _secureStorage.read(key: 'refreshToken');
+
+    if (accessToken == null || refreshToken == null) {
+      _isAuthenticated = false;
+      return;
+    }
+
+    if (!JwtDecoder.isExpired(accessToken)) {
+      _isAuthenticated = true;
+    } else {
+      final refreshedToken = await refreshAccessToken();
+      if (refreshedToken) {
+        _isAuthenticated = true;
+      } else {
+        _isAuthenticated = false;
+        await _secureStorage.delete(key: 'accessToken');
+        await _secureStorage.delete(key: 'refreshToken');
+      }
+
+      notifyListeners();
+    }
   }
 
   Future<void> logout() async {

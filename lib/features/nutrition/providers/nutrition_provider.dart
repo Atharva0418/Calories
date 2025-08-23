@@ -49,7 +49,6 @@ class NutritionProvider with ChangeNotifier {
   Future<void> uploadImage() async {
     _setScreenState(ScreenState.loading);
     if (_imageFile == null) return;
-
     try {
       final response = await authProvider.authenticatedRequest((
         accessToken,
@@ -81,6 +80,8 @@ class NutritionProvider with ChangeNotifier {
 
         return await http.Response.fromStream(streamedResponse);
       });
+
+      print(response.body);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
