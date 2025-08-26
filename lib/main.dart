@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'features/chat/screens/chat_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
 import 'features/nutrition/screens/home_screen.dart';
 
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
             colorSchemeSeed: Colors.blue,
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
+          routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
               // authProvider.isAuthenticated
               //     ? const HomeScreen()

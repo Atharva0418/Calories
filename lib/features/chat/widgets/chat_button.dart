@@ -10,10 +10,7 @@ class ChatButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ChatScreen()),
-        );
+        Navigator.pushNamed(context, ChatScreen.routeName);
       },
       icon: Icon(LucideIcons.messageCircleMore, color: Colors.deepOrange),
       label: Text(
