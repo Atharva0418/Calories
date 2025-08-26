@@ -11,6 +11,8 @@ import '../widgets/input_bar.dart';
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
+  static const routeName = '/chat';
+
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
