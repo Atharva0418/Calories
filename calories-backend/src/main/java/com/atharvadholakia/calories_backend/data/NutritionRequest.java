@@ -4,24 +4,48 @@ import java.util.List;
 
 public class NutritionRequest {
   private final List<Content> contents;
+  private final SystemInstruction systemInstruction;
 
-  public NutritionRequest(List<Content> contents) {
+  public NutritionRequest(SystemInstruction systemInstruction, List<Content> contents) {
     this.contents = contents;
+    this.systemInstruction = systemInstruction;
   }
 
   public List<Content> getContents() {
     return contents;
   }
 
-  public static class Content {
+  public SystemInstruction getSystemInstruction() {
+    return systemInstruction;
+  }
+
+  public static class SystemInstruction {
     private final List<Part> parts;
 
-    public Content(List<Part> parts) {
+    public SystemInstruction(List<Part> parts) {
       this.parts = parts;
     }
 
     public List<Part> getParts() {
       return parts;
+    }
+  }
+
+  public static class Content {
+    private final String role;
+    private final List<Part> parts;
+
+    public Content(String role, List<Part> parts) {
+      this.role = role;
+      this.parts = parts;
+    }
+
+    public List<Part> getParts() {
+      return parts;
+    }
+
+    public String getRole() {
+      return role;
     }
   }
 

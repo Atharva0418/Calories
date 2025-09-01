@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'features/auth/screens/signup_screen.dart';
 import 'features/chat/screens/chat_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
 import 'features/nutrition/screens/home_screen.dart';
@@ -23,10 +24,14 @@ Future<void> main() async {
         ChangeNotifierProxyProvider<AuthProvider, NutritionProvider>(
           create:
               (auth) =>
-                  NutritionProvider(authProvider: auth.read<AuthProvider>()),
+              NutritionProvider(authProvider: auth.read<AuthProvider>()),
           update: (_, __, ___) => ___!,
         ),
-        ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, ChatProvider>(
+          create:
+              (auth) => ChatProvider(authProvider: auth.read<AuthProvider>()),
+          update: (_, __, ___) => ___!,
+        ),
       ],
       child: const MyApp(),
     ),
@@ -53,10 +58,9 @@ class MyApp extends StatelessWidget {
           ),
           routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
-              // authProvider.isAuthenticated
-              //     ? const HomeScreen()
-              //     : const SignupScreen(),
-              HomeScreen(),
+          authProvider.isAuthenticated
+              ? const HomeScreen()
+              : const SignupScreen(),
         );
       },
     );
