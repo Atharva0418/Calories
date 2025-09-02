@@ -48,6 +48,7 @@ public class CaloriesController {
 
   @PostMapping("/chat")
   public ResponseEntity<String> chatWithAI(@RequestBody String message) {
+    log.info("Calling service to chat with AI.");
     String chatResponse = caloriesService.chatWithAI(message);
     return new ResponseEntity<>(chatResponse, HttpStatus.OK);
   }
