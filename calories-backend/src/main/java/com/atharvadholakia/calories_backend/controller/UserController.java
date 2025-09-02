@@ -32,6 +32,7 @@ public class UserController {
 
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDTO signupDTO) {
+    log.info("Calling service to register user.");
     boolean isRegistered = userService.registerUser(signupDTO);
     if (isRegistered) {
       String accessToken = jwtUtil.generateAccessToken(signupDTO.getEmail());
@@ -44,6 +45,7 @@ public class UserController {
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginDTO) {
+    log.info("Calling service to authenticate user.");
     boolean isAuthenticated = userService.authenticateLogin(loginDTO);
     if (isAuthenticated) {
       String accessToken = jwtUtil.generateAccessToken(loginDTO.getEmail());

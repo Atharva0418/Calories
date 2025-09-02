@@ -116,6 +116,7 @@ public class CaloriesService {
   }
 
   public String chatWithAI(String message) {
+    log.info("Getting user ID.");
     String userId = getCurrentUserId();
 
     chatSessionManager.addMessage(
@@ -130,6 +131,7 @@ public class CaloriesService {
         new NutritionRequest(systemInstruction, chatSessionManager.getHistory(userId));
 
     try {
+      log.info("Calling AI Model to chat.");
       NutritionResponse chatResponse =
           webClient
               .post()
@@ -154,6 +156,7 @@ public class CaloriesService {
           new NutritionRequest.Content(
               "model", List.of(new NutritionRequest.TextPart(jsonResponse))));
 
+      log.info("Successfully receieved response from AI Model.");
       return jsonResponse;
 
     } catch (WebClientResponseException e) {
