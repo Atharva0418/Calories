@@ -19,26 +19,24 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: const Header(),
 
-      body: Builder(
-        builder: (context) {
-          switch (state) {
-            case ScreenState.loading:
-              return const LoadingView();
+      body: () {
+        switch (state) {
+          case ScreenState.loading:
+            return const LoadingView();
 
-            case ScreenState.error:
-              return ErrorView(
-                message:
-                    nutritionProvider.errorMessage ??
-                    "Something went wrong.Please try again later",
-              );
+          case ScreenState.error:
+            return ErrorView(
+              message:
+                  nutritionProvider.errorMessage ??
+                  "Something went wrong.Please try again later",
+            );
 
-            case ScreenState.success:
-            case ScreenState.idle:
-            default:
-              return NutritionView();
-          }
-        },
-      ),
+          case ScreenState.success:
+          case ScreenState.idle:
+          default:
+            return NutritionView();
+        }
+      }(),
     );
   }
 }

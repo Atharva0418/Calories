@@ -1,13 +1,14 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
-import 'package:calories/features/auth/screens/signup_screen.dart';
-import 'package:calories/features/nutrition/screens/home_screen.dart';
+import 'package:calories/features/chat/provider/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'features/chat/screens/chat_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
+import 'features/nutrition/screens/home_screen.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -25,6 +26,7 @@ Future<void> main() async {
                   NutritionProvider(authProvider: auth.read<AuthProvider>()),
           update: (_, __, ___) => ___!,
         ),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: const MyApp(),
     ),
@@ -49,10 +51,12 @@ class MyApp extends StatelessWidget {
             colorSchemeSeed: Colors.blue,
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
+          routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
-              authProvider.isAuthenticated
-                  ? const HomeScreen()
-                  : const SignupScreen(),
+              // authProvider.isAuthenticated
+              //     ? const HomeScreen()
+              //     : const SignupScreen(),
+              HomeScreen(),
         );
       },
     );

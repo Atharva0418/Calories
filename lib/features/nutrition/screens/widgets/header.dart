@@ -1,7 +1,9 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
+import 'package:calories/features/chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/screens/login_screen.dart';
@@ -24,6 +26,18 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
+        if (ModalRoute.of(context)?.settings.name != ChatScreen.routeName)
+          IconButton(
+            onPressed:
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatScreen(),
+                    settings: RouteSettings(name: ChatScreen.routeName),
+                  ),
+                ),
+            icon: Icon(LucideIcons.messageCircleMore, color: Colors.white),
+          ),
         IconButton(
           onPressed: () {
             showDialog(

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../chat/widgets/chat_button.dart';
+
 class ImagePreview extends StatelessWidget {
   final File? image;
 
@@ -50,6 +52,9 @@ class ImagePreview extends StatelessWidget {
               SizedBox(height: 20.h),
 
               const PickImageButton(),
+
+              SizedBox(height: 10.h),
+              const ChatButton(),
             ],
           ),
         ),
