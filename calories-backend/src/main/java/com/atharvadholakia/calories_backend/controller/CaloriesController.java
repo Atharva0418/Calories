@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,5 +44,12 @@ public class CaloriesController {
   public ResponseEntity<Void> healthCheck() {
     log.info("Server is running.");
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping("/chat")
+  public ResponseEntity<String> chatWithAI(@RequestBody String message) {
+    log.info("Calling service to chat with AI.");
+    String chatResponse = caloriesService.chatWithAI(message);
+    return new ResponseEntity<>(chatResponse, HttpStatus.OK);
   }
 }

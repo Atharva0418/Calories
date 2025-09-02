@@ -20,14 +20,15 @@ public class SignupRequestDTO {
   @NotBlank()
   @Pattern(
       regexp = "^(?=.{1,254}$)([a-zA-Z0-9._%+-]{1,64})@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
-      message = "Please use a valid email.") 
+      message = "Please use a valid email.")
   private String email;
 
   @NotBlank()
   @Pattern(
       regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$#_!%*?&])[A-Za-z\\d@#$!_%*?&]{8,27}$",
       message =
-          "Password must have 8-27 characters, including uppercase, lowercase, number, and special character.")
+          "Password must have 8-27 characters, including uppercase, lowercase, number, and special"
+              + " character.")
   private String password;
 
   public String getUsername() {

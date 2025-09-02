@@ -1,12 +1,26 @@
+import 'dart:convert';
+
+import 'package:calories/features/auth/providers/auth_provider.dart';
 import 'package:calories/features/chat/models/chat_message.dart';
 import 'package:calories/features/chat/models/message_role.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class ChatProvider extends ChangeNotifier {
+  final AuthProvider authProvider;
+
+  ChatProvider({required this.authProvider});
+
   final List<ChatMessage> _messages = [];
+
   bool _isTyping = false;
 
   bool get isTyping => _isTyping;
+
+  String? _errorMessage;
+
+  String? get errorMessage => _errorMessage;
 
   List<ChatMessage> get messages => List.unmodifiable(_messages);
 
@@ -18,7 +32,7 @@ class ChatProvider extends ChangeNotifier {
   void addTyping() {
     _isTyping = true;
     _messages.add(
-      ChatMessage(text: '', role: MessageRole.assistant, isTyping: true),
+      ChatMessage(text: '.', role: MessageRole.assistant, isTyping: true),
     );
 
     notifyListeners();
@@ -47,10 +61,47 @@ class ChatProvider extends ChangeNotifier {
 
     addTyping();
 
-    await Future.delayed(const Duration(seconds: 3));
+    final chatResponse = await authProvider.authenticatedRequest((
+      accessToken,
+    ) async {
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/chat');
+
+      try {
+        final chatResponse = await http.post(
+          uri,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': '${dotenv.env['X_API_KEY']}',
+            'Authorization': 'Bearer $accessToken',
+          },
+          body: jsonEncode({'message': message}),
+        );
+
+        if (chatResponse.statusCode == 200) {
+          return chatResponse;
+        }
+        throw Exception('Server is unavailable. Please try again later.');
+      } catch (e) {
+        _errorMessage = _formatError(e);
+        _isTyping = false;
+        _messages.removeWhere((msg) => msg.isTyping == true);
+        notifyListeners();
+        rethrow;
+      }
+    });
 
     replaceTyping(
-      ChatMessage(text: "Hi, How can I help you?", role: MessageRole.assistant),
+      ChatMessage(text: chatResponse.body, role: MessageRole.assistant),
     );
+  }
+
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
+
+  String _formatError(Object e) {
+    final raw = e.toString();
+    return raw.replaceFirst(RegExp(r'^Exception:\s*'), '');
   }
 }

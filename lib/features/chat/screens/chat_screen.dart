@@ -34,6 +34,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final chatProvider = context.watch<ChatProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (chatProvider.errorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(chatProvider.errorMessage!)),
+        );
+        chatProvider.clearError();
+      });
+    }
+
     return Scaffold(
       appBar: Header(),
       body: Column(

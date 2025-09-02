@@ -31,7 +31,6 @@ public class UserService {
       log.warn("Email already registered: {}", signupDTO.getEmail());
       throw new EmailAlreadyExistsException();
     }
-
     User user =
         new User(
             signupDTO.getUsername(),
@@ -43,6 +42,7 @@ public class UserService {
   }
 
   public boolean authenticateLogin(LoginRequestDTO loginDTO) {
+    log.info("Authenticating user with email: {}", loginDTO.getEmail());
     Optional<User> User = userRepository.findByEmail(loginDTO.getEmail());
     if (!User.isPresent()) {
       log.warn("Authentication failed: User not found with email {}", loginDTO.getEmail());
@@ -50,10 +50,11 @@ public class UserService {
     }
 
     if (!passwordEncoder.matches(loginDTO.getPassword(), User.get().getHashedPassword())) {
-      log.warn("Authentication failed for email {}", loginDTO.getEmail());
+      log.warn("Authentication failed: Invalid password for email {}", loginDTO.getEmail());
       throw new BadCredentialsException("Invalid credentials.");
     }
 
+    log.info("User authenticated successfully: {}");
     return true;
   }
 }
