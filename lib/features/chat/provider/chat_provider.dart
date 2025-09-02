@@ -13,9 +13,14 @@ class ChatProvider extends ChangeNotifier {
   ChatProvider({required this.authProvider});
 
   final List<ChatMessage> _messages = [];
+
   bool _isTyping = false;
 
   bool get isTyping => _isTyping;
+
+  String? _errorMessage;
+
+  String? get errorMessage => _errorMessage;
 
   List<ChatMessage> get messages => List.unmodifiable(_messages);
 
@@ -27,7 +32,7 @@ class ChatProvider extends ChangeNotifier {
   void addTyping() {
     _isTyping = true;
     _messages.add(
-      ChatMessage(text: '', role: MessageRole.assistant, isTyping: true),
+      ChatMessage(text: '.', role: MessageRole.assistant, isTyping: true),
     );
 
     notifyListeners();
@@ -75,9 +80,12 @@ class ChatProvider extends ChangeNotifier {
         if (chatResponse.statusCode == 200) {
           return chatResponse;
         }
-        throw Exception('Unexpected Error');
+        throw Exception('Server is unavailable. Please try again later.');
       } catch (e) {
-        debugPrint(e.toString());
+        _errorMessage = _formatError(e);
+        _isTyping = false;
+        _messages.removeWhere((msg) => msg.isTyping == true);
+        notifyListeners();
         rethrow;
       }
     });
@@ -85,5 +93,15 @@ class ChatProvider extends ChangeNotifier {
     replaceTyping(
       ChatMessage(text: chatResponse.body, role: MessageRole.assistant),
     );
+  }
+
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
+
+  String _formatError(Object e) {
+    final raw = e.toString();
+    return raw.replaceFirst(RegExp(r'^Exception:\s*'), '');
   }
 }

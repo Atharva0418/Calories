@@ -17,12 +17,14 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
 
   bool _isLoading = false;
-  String? _errorMessage;
-  Map<String, String> _fieldErrors = {};
 
   bool get isLoading => _isLoading;
 
+  String? _errorMessage;
+
   String? get errorMessage => _errorMessage;
+
+  Map<String, String> _fieldErrors = {};
 
   Map<String, String> get fieldErrors => _fieldErrors;
 
@@ -76,7 +78,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = _formatError(e);
       return false;
     } finally {
       _isLoading = false;
@@ -134,7 +136,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = _formatError(e);
       return false;
     } finally {
       _isLoading = false;
@@ -231,5 +233,10 @@ class AuthProvider with ChangeNotifier {
     await _secureStorage.delete(key: 'refreshToken');
     _isAuthenticated = false;
     notifyListeners();
+  }
+
+  String _formatError(Object e) {
+    final raw = e.toString();
+    return raw.replaceFirst(RegExp(r'^Exception:\s*'), '');
   }
 }
