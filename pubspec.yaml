@@ -46,6 +46,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   jwt_decoder: ^2.0.1
   lucide_icons_flutter: ^3.0.9
+  font_awesome_flutter: ^10.9.1
 
 
 
