@@ -15,6 +15,7 @@ class FoodNameInput extends StatelessWidget {
         labelStyle: GoogleFonts.fredoka(fontSize: 18),
         prefixIcon: Icon(Icons.fastfood),
       ),
+      validator: (value) => value!.isEmpty ? "Food cannot be empty" : null,
     );
   }
 }

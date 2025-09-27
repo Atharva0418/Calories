@@ -10,11 +10,13 @@ class WeightInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      keyboardType: TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         label: Text('Weight (g)'),
         labelStyle: GoogleFonts.fredoka(fontSize: 18),
         prefixIcon: Icon(Icons.straighten),
       ),
+      validator: (value) => value!.isEmpty ? "Weight cannot be empty." : null,
     );
   }
 }
