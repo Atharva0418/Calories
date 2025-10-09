@@ -47,12 +47,16 @@ dependencies:
   jwt_decoder: ^2.0.1
   lucide_icons_flutter: ^3.0.9
   font_awesome_flutter: ^10.9.1
+  json_annotation: ^4.9.0
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.4.8
+  json_serializable: ^6.9.0
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

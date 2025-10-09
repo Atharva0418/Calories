@@ -1,3 +1,4 @@
+import 'package:calories/features/food_log/models/food_log.dart';
 import 'package:calories/features/food_log/widgets/food_name_input.dart';
 import 'package:calories/features/food_log/widgets/weight_input.dart';
 import 'package:calories/features/nutrition/screens/widgets/header.dart';
@@ -5,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/food_log_provider.dart';
 
 class FoodLogScreen extends StatefulWidget {
   const FoodLogScreen({super.key});
@@ -36,11 +40,40 @@ class _FoodLogScreenState extends State<FoodLogScreen> {
     super.dispose();
   }
 
-  void _saveFood() {
+  void _saveFood() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Food saved successfully.")));
+      FoodLog foodLog = FoodLog(
+        foodName: _foodNameController.text,
+        weight: double.tryParse(_weightController.text),
+        protein: double.tryParse(_proteinController.text),
+        carbohydrates: double.tryParse(_carbsController.text),
+        sugar: double.tryParse(_sugarController.text),
+        fat: double.tryParse(_fatController.text),
+        energy: double.tryParse(_energyController.text),
+      );
+
+      final foodLogProvider = context.read<FoodLogProvider>();
+
+      final foodLogResponse = await foodLogProvider.saveFoodLog(foodLog);
+
+      if (foodLogResponse && mounted) {
+        _foodNameController.clear();
+        _weightController.clear();
+        _proteinController.clear();
+        _carbsController.clear();
+        _sugarController.clear();
+        _energyController.clear();
+        _fatController.clear();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Food saved successfully.")));
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to save food. Please try again later"),
+          ),
+        );
+      }
     }
   }
 
