@@ -73,7 +73,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.logout, color: Colors.white),
         ),
       ],
-      backgroundColor: Colors.orangeAccent,
+      backgroundColor: Colors.orange,
     );
   }
 

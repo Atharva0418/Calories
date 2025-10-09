@@ -14,7 +14,7 @@ class ChatButton extends StatelessWidget {
       },
       icon: Icon(LucideIcons.messageCircleMore, color: Colors.deepOrange),
       label: Text(
-        "Chat with Calories.",
+        "Chat with Calories",
         style: GoogleFonts.fredoka(textStyle: TextStyle(color: Colors.black)),
       ),
     );
