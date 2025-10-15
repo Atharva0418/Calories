@@ -10,14 +10,14 @@ import 'package:provider/provider.dart';
 
 import '../providers/food_log_provider.dart';
 
-class FoodLogScreen extends StatefulWidget {
-  const FoodLogScreen({super.key});
+class AddFoodLogScreen extends StatefulWidget {
+  const AddFoodLogScreen({super.key});
 
   @override
-  State<FoodLogScreen> createState() => _FoodLogScreenState();
+  State<AddFoodLogScreen> createState() => _AddFoodLogScreenState();
 }
 
-class _FoodLogScreenState extends State<FoodLogScreen> {
+class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _foodNameController = TextEditingController();

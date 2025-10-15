@@ -1,4 +1,4 @@
-import 'package:calories/features/food_log/screens/food_log_screen.dart';
+import 'package:calories/features/food_log/screens/add_foodlog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,7 +11,7 @@ class FoodLogButton extends StatelessWidget {
       onPressed:
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => FoodLogScreen()),
+            MaterialPageRoute(builder: (_) => AddFoodLogScreen()),
           ),
       icon: Icon(Icons.restaurant, color: Colors.deepOrange),
       label: Text(
