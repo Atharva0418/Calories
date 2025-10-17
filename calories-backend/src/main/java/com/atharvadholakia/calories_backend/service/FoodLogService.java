@@ -2,6 +2,7 @@ package com.atharvadholakia.calories_backend.service;
 
 import com.atharvadholakia.calories_backend.data.foodlog.FoodLog;
 import com.atharvadholakia.calories_backend.repository.FoodLogRepository;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,9 @@ public class FoodLogService {
   public FoodLog addFoodLog(FoodLog foodLog) {
     log.info("Logging food.");
     return foodLogRepository.save(foodLog);
+  }
+
+  public List<FoodLog> getAllFoodLogs() {
+    return foodLogRepository.findAll();
   }
 }

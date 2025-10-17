@@ -1,13 +1,14 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
 import 'package:calories/features/chat/provider/chat_provider.dart';
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
-import 'package:calories/features/food_log/screens/food_logs_history_screen.dart';
+import 'package:calories/features/nutrition/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'features/auth/screens/signup_screen.dart';
 import 'features/chat/screens/chat_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
 
@@ -64,10 +65,9 @@ class MyApp extends StatelessWidget {
           ),
           routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
-              // authProvider.isAuthenticated
-              //     ? const HomeScreen()
-              //     : const SignupScreen(),
-              FoodLogsHistoryScreen(),
+              authProvider.isAuthenticated
+                  ? const HomeScreen()
+                  : const SignupScreen(),
         );
       },
     );

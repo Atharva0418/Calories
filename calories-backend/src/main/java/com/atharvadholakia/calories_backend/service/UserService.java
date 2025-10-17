@@ -54,7 +54,7 @@ public class UserService {
       throw new BadCredentialsException("Invalid credentials.");
     }
 
-    log.info("User authenticated successfully: {}");
+    log.info("User authenticated successfully.");
     return true;
   }
 }

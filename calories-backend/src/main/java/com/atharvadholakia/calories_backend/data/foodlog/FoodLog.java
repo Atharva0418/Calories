@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,10 +28,10 @@ public class FoodLog {
   private float sugar;
   private float energy;
 
-  private Instant timeStamp;
+  private LocalDateTime timeStamp;
 
   @PrePersist
   public void setTimeStamp() {
-    this.timeStamp = Instant.now();
+    this.timeStamp = LocalDateTime.now();
   }
 }

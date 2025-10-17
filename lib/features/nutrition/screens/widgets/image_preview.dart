@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:calories/features/food_log/widgets/food_log_button.dart';
+import 'package:calories/features/food_log/widgets/add_food_log_button.dart';
+import 'package:calories/features/food_log/widgets/food_log_history_button.dart';
 import 'package:calories/features/nutrition/screens/widgets/pick_image_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,7 +59,10 @@ class ImagePreview extends StatelessWidget {
               const ChatButton(),
 
               SizedBox(height: 10.h),
-              const FoodLogButton(),
+              const AddFoodLogButton(),
+
+              SizedBox(height: 10.h),
+              const FoodLogsHistoryButton(),
             ],
           ),
         ),

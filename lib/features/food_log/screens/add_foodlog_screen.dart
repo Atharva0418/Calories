@@ -1,4 +1,5 @@
 import 'package:calories/features/food_log/models/food_log.dart';
+import 'package:calories/features/food_log/screens/food_logs_history_screen.dart';
 import 'package:calories/features/food_log/widgets/food_name_input.dart';
 import 'package:calories/features/food_log/widgets/weight_input.dart';
 import 'package:calories/features/nutrition/screens/widgets/header.dart';
@@ -50,6 +51,7 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
         sugar: double.tryParse(_sugarController.text),
         fat: double.tryParse(_fatController.text),
         energy: double.tryParse(_energyController.text),
+        timeStamp: DateTime.now(),
       );
 
       final foodLogProvider = context.read<FoodLogProvider>();
@@ -64,6 +66,12 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
         _sugarController.clear();
         _energyController.clear();
         _fatController.clear();
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => FoodLogsHistoryScreen()),
+        );
+
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("Food saved successfully.")));

@@ -11,6 +11,7 @@ class FoodLog {
   final double? sugar;
   final double? fat;
   final double? energy;
+  final DateTime timeStamp;
 
   FoodLog({
     required this.foodName,
@@ -20,6 +21,7 @@ class FoodLog {
     required this.sugar,
     required this.fat,
     required this.energy,
+    required this.timeStamp,
   });
 
   Map<String, dynamic> toJson() => _$FoodLogToJson(this);

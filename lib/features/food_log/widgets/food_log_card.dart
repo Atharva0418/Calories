@@ -1,12 +1,18 @@
+import 'package:calories/features/food_log/models/food_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class FoodLogCard extends StatelessWidget {
-  const FoodLogCard({super.key});
+  final FoodLog foodLog;
+
+  const FoodLogCard({required this.foodLog, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final String date = DateFormat('MMM d, yyyy').format(foodLog.timeStamp);
+    final String time = DateFormat('Hm').format(foodLog.timeStamp);
     return Card(
       elevation: 4,
       child: Padding(
@@ -21,7 +27,7 @@ class FoodLogCard extends StatelessWidget {
                 ),
                 SizedBox(width: 10.w),
                 Text(
-                  "Apple",
+                  foodLog.foodName,
                   style: GoogleFonts.fredoka(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -30,7 +36,7 @@ class FoodLogCard extends StatelessWidget {
 
                 Expanded(
                   child: Text(
-                    "15th October, 2025",
+                    date,
                     textAlign: TextAlign.end,
                     style: GoogleFonts.fredoka(fontWeight: FontWeight.w100),
                   ),
@@ -41,13 +47,13 @@ class FoodLogCard extends StatelessWidget {
 
             Row(
               children: [
-                Text("Protein : 20g"),
+                Text("Protein : ${foodLog.protein}"),
                 SizedBox(width: 10.w),
-                Text("Calories : 100kcal"),
+                Text("Energy : ${foodLog.energy}"),
 
                 Expanded(
                   child: Text(
-                    "21:11:20",
+                    time,
                     textAlign: TextAlign.end,
                     style: GoogleFonts.fredoka(fontWeight: FontWeight.w100),
                   ),

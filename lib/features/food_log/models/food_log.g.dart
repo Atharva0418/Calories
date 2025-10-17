@@ -14,6 +14,7 @@ FoodLog _$FoodLogFromJson(Map<String, dynamic> json) => FoodLog(
   sugar: (json['sugar'] as num?)?.toDouble(),
   fat: (json['fat'] as num?)?.toDouble(),
   energy: (json['energy'] as num?)?.toDouble(),
+  timeStamp: DateTime.parse(json['timeStamp'] as String),
 );
 
 Map<String, dynamic> _$FoodLogToJson(FoodLog instance) => <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$FoodLogToJson(FoodLog instance) => <String, dynamic>{
   'sugar': instance.sugar,
   'fat': instance.fat,
   'energy': instance.energy,
+  'timeStamp': instance.timeStamp.toIso8601String(),
 };

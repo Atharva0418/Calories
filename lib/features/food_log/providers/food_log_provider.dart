@@ -13,6 +13,10 @@ class FoodLogProvider with ChangeNotifier {
 
   FoodLogProvider({required this.authProvider});
 
+  final List<FoodLog> _foodLogs = [];
+
+  List<FoodLog> get foodLogs => _foodLogs;
+
   String? _errorMessage;
 
   String? get errorMessage => _errorMessage;
@@ -47,6 +51,8 @@ class FoodLogProvider with ChangeNotifier {
       });
 
       if (response.statusCode == 201) {
+        _foodLogs.add(foodLog);
+        notifyListeners();
         return true;
       }
       return false;
