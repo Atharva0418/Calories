@@ -7,6 +7,7 @@ part of 'food_log.dart';
 // **************************************************************************
 
 FoodLog _$FoodLogFromJson(Map<String, dynamic> json) => FoodLog(
+  id: json['id'] as String,
   foodName: json['foodName'] as String,
   weight: (json['weight'] as num?)?.toDouble(),
   protein: (json['protein'] as num?)?.toDouble(),

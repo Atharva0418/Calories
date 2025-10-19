@@ -113,4 +113,37 @@ class FoodLogProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> deleteFoodLog(FoodLog foodLog) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await authProvider.authenticatedRequest((
+        accessToken,
+      ) async {
+        final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/log/del/${foodLog.id}',
+        );
+
+        final deleteResponse = await http.delete(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': '${dotenv.env['X_API_KEY']}',
+            'Authorization': 'Bearer $accessToken',
+          },
+        );
+
+        if (deleteResponse.statusCode == 200) {
+          _foodLogs.remove(foodLog);
+        }
+        return deleteResponse;
+      });
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

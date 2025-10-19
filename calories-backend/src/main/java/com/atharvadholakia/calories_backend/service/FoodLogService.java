@@ -2,7 +2,7 @@ package com.atharvadholakia.calories_backend.service;
 
 import com.atharvadholakia.calories_backend.data.User;
 import com.atharvadholakia.calories_backend.data.foodlog.FoodLog;
-import com.atharvadholakia.calories_backend.exceptions.EmailNotFoundException;
+import com.atharvadholakia.calories_backend.exceptions.ResourceNotFoundException;
 import com.atharvadholakia.calories_backend.repository.FoodLogRepository;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
 import java.util.List;
@@ -27,7 +27,7 @@ public class FoodLogService {
     User user =
         userRepository
             .findByEmail(email)
-            .orElseThrow(() -> new EmailNotFoundException("User not found with email " + email));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found with email " + email));
 
     foodLog.setUser(user);
 
@@ -38,5 +38,15 @@ public class FoodLogService {
   public List<FoodLog> getAllFoodLogsByUserEmail(String email) {
     log.info("Retrieving all food logs of User : {}", email);
     return foodLogRepository.findByUserEmail(email);
+  }
+
+  public void deleteFoodLogById(String id) {
+    log.info("Fetching foodLog with id: {}", id);
+    foodLogRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("FoodLog not found with id: " + id));
+
+    log.info("Deleting foodLog with id: {}", id);
+    foodLogRepository.deleteById(id);
   }
 }

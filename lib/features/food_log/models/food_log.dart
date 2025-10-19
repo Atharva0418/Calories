@@ -4,6 +4,7 @@ part 'food_log.g.dart';
 
 @JsonSerializable()
 class FoodLog {
+  final String? id;
   final String foodName;
   final double? weight;
   final double? protein;
@@ -14,6 +15,7 @@ class FoodLog {
   final DateTime timeStamp;
 
   FoodLog({
+    this.id,
     required this.foodName,
     required this.weight,
     required this.protein,
@@ -26,5 +28,6 @@ class FoodLog {
 
   factory FoodLog.fromJson(Map<String, dynamic> json) =>
       _$FoodLogFromJson(json);
+
   Map<String, dynamic> toJson() => _$FoodLogToJson(this);
 }
