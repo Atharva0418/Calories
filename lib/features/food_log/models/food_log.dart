@@ -24,5 +24,7 @@ class FoodLog {
     required this.timeStamp,
   });
 
+  factory FoodLog.fromJson(Map<String, dynamic> json) =>
+      _$FoodLogFromJson(json);
   Map<String, dynamic> toJson() => _$FoodLogToJson(this);
 }

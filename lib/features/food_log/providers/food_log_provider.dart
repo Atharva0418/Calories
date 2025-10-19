@@ -21,12 +21,23 @@ class FoodLogProvider with ChangeNotifier {
 
   String? get errorMessage => _errorMessage;
 
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
   Future<bool> saveFoodLog(FoodLog foodLog) async {
+    _isLoading = true;
+    notifyListeners();
     try {
       final response = await authProvider.authenticatedRequest((
         accessToken,
       ) async {
-        final url = Uri.parse('${dotenv.env['BASE_URL']}/log/addFood');
+        final userEmail = await authProvider.secureStorage.read(
+          key: 'userEmail',
+        );
+        final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/log/addFood/$userEmail',
+        );
 
         final logResponse = await http
             .post(
@@ -52,13 +63,54 @@ class FoodLogProvider with ChangeNotifier {
 
       if (response.statusCode == 201) {
         _foodLogs.add(foodLog);
-        notifyListeners();
         return true;
       }
       return false;
     } catch (e) {
       _errorMessage = e.toString();
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchFoodLogs() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await authProvider.authenticatedRequest((
+        accessToken,
+      ) async {
+        final userEmail = await authProvider.secureStorage.read(
+          key: 'userEmail',
+        );
+        final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/log/allLogs/$userEmail',
+        );
+
+        final allLogsResponse = await http.get(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': '${dotenv.env['X_API_KEY']}',
+            'Authorization': 'Bearer $accessToken',
+          },
+        );
+        if (allLogsResponse.statusCode == 200) {
+          final List<dynamic> allLogs = jsonDecode(allLogsResponse.body);
+          _foodLogs.clear();
+          _foodLogs.addAll(
+            allLogs.map((log) => FoodLog.fromJson(log)).toList(),
+          );
+        }
+        return allLogsResponse;
+      });
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

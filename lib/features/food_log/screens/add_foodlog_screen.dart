@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/food_log_provider.dart';
@@ -126,84 +127,104 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final foodLogProvider = context.watch<FoodLogProvider>();
+
     return Scaffold(
       appBar: Header(),
       body: Padding(
         padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
+        child:
+            foodLogProvider.isLoading
+                ? Center(
+                  child: Lottie.asset(
+                    'assets/animations/SearchingFood_colored.json',
+                    delegates: LottieDelegates(
+                      values: [
+                        ValueDelegate.color(['**'], value: Colors.orangeAccent),
+                      ],
+                    ),
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.contain,
+                  ),
+                )
+                : Form(
+                  key: _formKey,
+                  child: ListView(
                     children: [
-                      FoodNameInput(controller: _foodNameController),
+                      Card(
+                        elevation: 4,
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              FoodNameInput(controller: _foodNameController),
 
-                      SizedBox(height: 12.h),
-                      WeightInput(controller: _weightController),
+                              SizedBox(height: 12.h),
+                              WeightInput(controller: _weightController),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+
+                      _buildNutrientCard(
+                        label: 'Protein (g)',
+                        controller: _proteinController,
+                        icon: Icons.fitness_center,
+                        color: Colors.green,
+                      ),
+
+                      _buildNutrientCard(
+                        label: 'Carbohydrates (g)',
+                        controller: _carbsController,
+                        icon: FontAwesomeIcons.breadSlice,
+                        color: Colors.blue,
+                      ),
+
+                      _buildNutrientCard(
+                        label: 'Sugar (g)',
+                        controller: _sugarController,
+                        icon: FontAwesomeIcons.cube,
+                        color: Colors.pinkAccent,
+                      ),
+
+                      _buildNutrientCard(
+                        label: 'Fat (g)',
+                        controller: _fatController,
+                        icon: FontAwesomeIcons.seedling,
+                        color: Colors.orange,
+                      ),
+
+                      _buildNutrientCard(
+                        label: 'Energy (kcal)',
+                        controller: _energyController,
+                        icon: FontAwesomeIcons.bolt,
+                        color: Colors.redAccent,
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      ElevatedButton(
+                        onPressed: () => _saveFood(),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          backgroundColor: Colors.orange,
+                        ),
+                        child: Text(
+                          'Save Food',
+                          style: GoogleFonts.fredoka(
+                            fontSize: 19,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(height: 16.h),
-
-              _buildNutrientCard(
-                label: 'Protein (g)',
-                controller: _proteinController,
-                icon: Icons.fitness_center,
-                color: Colors.green,
-              ),
-
-              _buildNutrientCard(
-                label: 'Carbohydrates (g)',
-                controller: _carbsController,
-                icon: FontAwesomeIcons.breadSlice,
-                color: Colors.blue,
-              ),
-
-              _buildNutrientCard(
-                label: 'Sugar (g)',
-                controller: _sugarController,
-                icon: FontAwesomeIcons.cube,
-                color: Colors.pinkAccent,
-              ),
-
-              _buildNutrientCard(
-                label: 'Fat (g)',
-                controller: _fatController,
-                icon: FontAwesomeIcons.seedling,
-                color: Colors.orange,
-              ),
-
-              _buildNutrientCard(
-                label: 'Energy (kcal)',
-                controller: _energyController,
-                icon: FontAwesomeIcons.bolt,
-                color: Colors.redAccent,
-              ),
-
-              SizedBox(height: 20.h),
-
-              ElevatedButton(
-                onPressed: () => _saveFood(),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  backgroundColor: Colors.orange,
-                ),
-                child: Text(
-                  'Save Food',
-                  style: GoogleFonts.fredoka(fontSize: 19, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
