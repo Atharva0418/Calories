@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:calories/features/auth/providers/auth_provider.dart';
@@ -67,15 +68,24 @@ class ChatProvider extends ChangeNotifier {
       final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/chat');
 
       try {
-        final chatResponse = await http.post(
-          uri,
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': '${dotenv.env['X_API_KEY']}',
-            'Authorization': 'Bearer $accessToken',
-          },
-          body: jsonEncode({'message': message}),
-        );
+        final chatResponse = await http
+            .post(
+              uri,
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '${dotenv.env['X_API_KEY']}',
+                'Authorization': 'Bearer $accessToken',
+              },
+              body: jsonEncode({'message': message}),
+            )
+            .timeout(
+              const Duration(seconds: 20),
+              onTimeout: () {
+                throw TimeoutException(
+                  "Server is down. Please try again later.",
+                );
+              },
+            );
 
         if (chatResponse.statusCode == 200) {
           return chatResponse;
