@@ -19,6 +19,7 @@ FoodLog _$FoodLogFromJson(Map<String, dynamic> json) => FoodLog(
 );
 
 Map<String, dynamic> _$FoodLogToJson(FoodLog instance) => <String, dynamic>{
+  'id': instance.id,
   'foodName': instance.foodName,
   'weight': instance.weight,
   'protein': instance.protein,

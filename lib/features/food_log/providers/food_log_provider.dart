@@ -75,6 +75,52 @@ class FoodLogProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> updateFoodLog(FoodLog foodLog) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await authProvider.authenticatedRequest((
+        accessToken,
+      ) async {
+        final url = Uri.parse('${dotenv.env['BASE_URL']}/log/edit');
+
+        final logResponse = await http
+            .patch(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '${dotenv.env['X_API_KEY']}',
+                'Authorization': 'Bearer $accessToken',
+              },
+              body: jsonEncode(foodLog.toJson()),
+            )
+            .timeout(
+              const Duration(seconds: 5),
+              onTimeout: () {
+                throw TimeoutException(
+                  "Request taking too long. Please try again later.",
+                );
+              },
+            );
+
+        return logResponse;
+      });
+
+      if (response.statusCode == 200) {
+        final index = _foodLogs.indexWhere((log) => log.id == foodLog.id);
+        if (index != -1) _foodLogs[index] = foodLog;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchFoodLogs() async {
     _isLoading = true;
     notifyListeners();

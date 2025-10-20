@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,5 +49,11 @@ public class FoodLogController {
 
     log.info("Successfully deleted the foodLog.");
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PatchMapping("/edit")
+  public ResponseEntity<FoodLog> updateFoodLogById(@RequestBody FoodLog foodLog) {
+    FoodLog updatedFoodLog = foodLogService.updateFoodLogById(foodLog);
+    return new ResponseEntity<>(updatedFoodLog, HttpStatus.OK);
   }
 }

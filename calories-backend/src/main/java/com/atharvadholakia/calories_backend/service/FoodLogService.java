@@ -7,6 +7,7 @@ import com.atharvadholakia.calories_backend.repository.FoodLogRepository;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,5 +49,20 @@ public class FoodLogService {
 
     log.info("Deleting foodLog with id: {}", id);
     foodLogRepository.deleteById(id);
+  }
+
+  public FoodLog updateFoodLogById(FoodLog foodLog) {
+    FoodLog existingFoodLog =
+        foodLogRepository
+            .findById(foodLog.getId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "FoodLog not found with id : " + foodLog.getId()));
+
+    BeanUtils.copyProperties(foodLog, existingFoodLog, "id", "user");
+
+    foodLogRepository.save(existingFoodLog);
+    return existingFoodLog;
   }
 }

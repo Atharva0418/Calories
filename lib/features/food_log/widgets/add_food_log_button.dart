@@ -11,7 +11,9 @@ class AddFoodLogButton extends StatelessWidget {
       onPressed:
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => AddFoodLogScreen()),
+            MaterialPageRoute(
+              builder: (_) => AddFoodLogScreen(isEditing: false),
+            ),
           ),
       icon: Icon(Icons.restaurant, color: Colors.deepOrange),
       label: Text(

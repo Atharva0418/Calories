@@ -13,7 +13,14 @@ import 'package:provider/provider.dart';
 import '../providers/food_log_provider.dart';
 
 class AddFoodLogScreen extends StatefulWidget {
-  const AddFoodLogScreen({super.key});
+  final bool isEditing;
+  final FoodLog? existingFoodLog;
+
+  const AddFoodLogScreen({
+    required this.isEditing,
+    this.existingFoodLog,
+    super.key,
+  });
 
   @override
   State<AddFoodLogScreen> createState() => _AddFoodLogScreenState();
@@ -29,6 +36,21 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
   final _fatController = TextEditingController();
   final _sugarController = TextEditingController();
   final _energyController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.isEditing && widget.existingFoodLog != null) {
+      _foodNameController.text = widget.existingFoodLog!.foodName;
+      _weightController.text = widget.existingFoodLog!.weight.toString();
+      _proteinController.text = widget.existingFoodLog!.protein.toString();
+      _carbsController.text = widget.existingFoodLog!.carbohydrates.toString();
+      _fatController.text = widget.existingFoodLog!.fat.toString();
+      _sugarController.text = widget.existingFoodLog!.sugar.toString();
+      _energyController.text = widget.existingFoodLog!.energy.toString();
+    }
+  }
 
   @override
   void dispose() {
@@ -76,6 +98,47 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("Food saved successfully.")));
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to save food. Please try again later"),
+          ),
+        );
+      }
+    }
+  }
+
+  void _updateFood() async {
+    if (_formKey.currentState!.validate()) {
+      FoodLog foodLog = FoodLog(
+        id: widget.existingFoodLog!.id,
+        foodName: _foodNameController.text,
+        weight: double.tryParse(_weightController.text),
+        protein: double.tryParse(_proteinController.text),
+        carbohydrates: double.tryParse(_carbsController.text),
+        sugar: double.tryParse(_sugarController.text),
+        fat: double.tryParse(_fatController.text),
+        energy: double.tryParse(_energyController.text),
+        timeStamp: DateTime.now(),
+      );
+
+      final foodLogProvider = context.read<FoodLogProvider>();
+
+      final foodLogResponse = await foodLogProvider.updateFoodLog(foodLog);
+
+      if (foodLogResponse && mounted) {
+        _foodNameController.clear();
+        _weightController.clear();
+        _proteinController.clear();
+        _carbsController.clear();
+        _sugarController.clear();
+        _energyController.clear();
+        _fatController.clear();
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Food saved successfully.")));
+        Navigator.pop(context);
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -206,7 +269,9 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
                       SizedBox(height: 20.h),
 
                       ElevatedButton(
-                        onPressed: () => _saveFood(),
+                        onPressed:
+                            () =>
+                                widget.isEditing ? _updateFood() : _saveFood(),
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           shape: RoundedRectangleBorder(
