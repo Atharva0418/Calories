@@ -50,7 +50,7 @@ class FoodLogProvider with ChangeNotifier {
               body: jsonEncode(foodLog.toJson()),
             )
             .timeout(
-              const Duration(seconds: 5),
+              const Duration(seconds: 10),
               onTimeout: () {
                 throw TimeoutException(
                   "Request taking too long. Please try again later.",
@@ -95,7 +95,7 @@ class FoodLogProvider with ChangeNotifier {
               body: jsonEncode(foodLog.toJson()),
             )
             .timeout(
-              const Duration(seconds: 5),
+              const Duration(seconds: 10),
               onTimeout: () {
                 throw TimeoutException(
                   "Request taking too long. Please try again later.",
@@ -135,14 +135,24 @@ class FoodLogProvider with ChangeNotifier {
           '${dotenv.env['BASE_URL']}/log/allLogs/$userEmail',
         );
 
-        final allLogsResponse = await http.get(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': '${dotenv.env['X_API_KEY']}',
-            'Authorization': 'Bearer $accessToken',
-          },
-        );
+        final allLogsResponse = await http
+            .get(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '${dotenv.env['X_API_KEY']}',
+                'Authorization': 'Bearer $accessToken',
+              },
+            )
+            .timeout(
+              const Duration(seconds: 5),
+              onTimeout: () {
+                throw TimeoutException(
+                  "Request taking too long. Please try again later.",
+                );
+              },
+            );
+
         if (allLogsResponse.statusCode == 200) {
           final List<dynamic> allLogs = jsonDecode(allLogsResponse.body);
           _foodLogs.clear();
@@ -171,14 +181,24 @@ class FoodLogProvider with ChangeNotifier {
           '${dotenv.env['BASE_URL']}/log/del/${foodLog.id}',
         );
 
-        final deleteResponse = await http.delete(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': '${dotenv.env['X_API_KEY']}',
-            'Authorization': 'Bearer $accessToken',
-          },
-        );
+        final deleteResponse = await http
+            .delete(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '${dotenv.env['X_API_KEY']}',
+                'Authorization': 'Bearer $accessToken',
+              },
+            )
+            .timeout(
+              const Duration(seconds: 5),
+              onTimeout: () {
+                throw TimeoutException(
+                  "Request taking too long. Please try again later.",
+                );
+              },
+            );
+        ;
 
         if (deleteResponse.statusCode == 200) {
           _foodLogs.remove(foodLog);

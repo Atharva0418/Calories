@@ -53,7 +53,7 @@ class AuthProvider with ChangeNotifier {
             }),
           )
           .timeout(
-            const Duration(seconds: 10),
+            const Duration(seconds: 20),
             onTimeout: () {
               throw TimeoutException(
                 "Request taking too long. Please try again later.",
@@ -114,7 +114,7 @@ class AuthProvider with ChangeNotifier {
             }),
           )
           .timeout(
-            const Duration(seconds: 10),
+            const Duration(seconds: 20),
             onTimeout: () {
               throw TimeoutException(
                 "Request taking too long. Please try again later.",

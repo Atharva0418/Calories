@@ -15,8 +15,10 @@ class FoodLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String date = DateFormat('MMM d, yyyy').format(foodLog.timeStamp);
-    final String time = DateFormat('Hm').format(foodLog.timeStamp);
+    final String date = DateFormat(
+      'MMM d, yyyy',
+    ).format(foodLog.timeStamp.toLocal());
+    final String time = DateFormat('Hm').format(foodLog.timeStamp.toLocal());
 
     return Card(
       elevation: 4,
