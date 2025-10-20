@@ -12,6 +12,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 class AuthProvider with ChangeNotifier {
   final _secureStorage = FlutterSecureStorage();
 
+  get secureStorage => _secureStorage;
+
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
@@ -68,6 +70,10 @@ class AuthProvider with ChangeNotifier {
         await _secureStorage.write(
           key: 'refreshToken',
           value: data['refreshToken'],
+        );
+        await _secureStorage.write(
+          key: 'userEmail',
+          value: signupRequest.email,
         );
         return true;
       } else {
@@ -126,6 +132,7 @@ class AuthProvider with ChangeNotifier {
           key: 'refreshToken',
           value: data['refreshToken'],
         );
+        await _secureStorage.write(key: 'userEmail', value: loginRequest.email);
         return true;
       } else {
         final data = jsonDecode(loginResponse.body);
@@ -231,6 +238,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     await _secureStorage.delete(key: 'accessToken');
     await _secureStorage.delete(key: 'refreshToken');
+    await _secureStorage.delete(key: 'userEmail');
     _isAuthenticated = false;
     notifyListeners();
   }

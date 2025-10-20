@@ -61,7 +61,7 @@ class PickImageButton extends StatelessWidget {
       onPressed: () => _showSourceSelector(context),
       icon: Icon(Icons.cloud, color: Colors.deepOrange),
       label: Text(
-        'Pick Image from Gallery',
+        'Snap your Snack',
         style: GoogleFonts.fredoka(
           textStyle: const TextStyle(color: Colors.black),
         ),

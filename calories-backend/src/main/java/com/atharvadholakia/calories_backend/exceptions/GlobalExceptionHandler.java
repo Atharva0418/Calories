@@ -18,6 +18,15 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Slf4j
 public class GlobalExceptionHandler {
 
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<HashMap<String, String>> handleResourceNotFoundException(
+      ResourceNotFoundException ex) {
+    String errorMessage = ex.getMessage();
+
+    log.warn(errorMessage);
+    return buildErrorResponse(errorMessage, HttpStatus.NOT_FOUND);
+  }
+
   @ExceptionHandler(MissingServletRequestPartException.class)
   public ResponseEntity<HashMap<String, String>> handleMissingServletRequestPartExcpetion(
       MissingServletRequestPartException ex) {
