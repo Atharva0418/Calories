@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,7 @@ public class FoodLog {
   private float sugar;
   private float energy;
 
-  private LocalDateTime timeStamp;
+  private OffsetDateTime timeStamp;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "email", referencedColumnName = "email", nullable = false)
@@ -42,6 +42,6 @@ public class FoodLog {
 
   @PrePersist
   public void setTimeStamp() {
-    this.timeStamp = LocalDateTime.now();
+    this.timeStamp = OffsetDateTime.now();
   }
 }
