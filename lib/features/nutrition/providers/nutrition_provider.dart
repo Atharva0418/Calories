@@ -51,27 +51,26 @@ class NutritionProvider with ChangeNotifier {
     if (_imageFile == null) return;
     try {
       final response = await authProvider.authenticatedRequest((
-        accessToken,
-      ) async {
+          accessToken,) async {
         final uri = Uri.parse(
           '${dotenv.env['BASE_URL']}/api/predict-nutrients',
         );
         final request =
-            http.MultipartRequest('POST', uri)
-              ..files.add(
-                await http.MultipartFile.fromPath(
-                  'imageFile',
-                  _imageFile!.path,
-                  filename: basename(_imageFile!.path),
-                ),
-              )
-              ..headers.addAll({
-                'x-api-key': '${dotenv.env['X_API_KEY']}',
-                'Authorization': 'Bearer $accessToken',
-              });
+        http.MultipartRequest('POST', uri)
+          ..files.add(
+            await http.MultipartFile.fromPath(
+              'imageFile',
+              _imageFile!.path,
+              filename: basename(_imageFile!.path),
+            ),
+          )
+          ..headers.addAll({
+            'x-api-key': '${dotenv.env['X_API_KEY']}',
+            'Authorization': 'Bearer $accessToken',
+          });
 
         final streamedResponse = await request.send().timeout(
-          const Duration(seconds: 15),
+          const Duration(seconds: 20),
           onTimeout: () {
             _setError("Request taking too long. Please try again later.");
             throw TimeoutException("Timed out");
@@ -89,7 +88,11 @@ class NutritionProvider with ChangeNotifier {
         notifyListeners();
         _setScreenState(ScreenState.success);
       } else {
-        final errorMsg = json.decode(response.body).values.first.toString();
+        final errorMsg = json
+            .decode(response.body)
+            .values
+            .first
+            .toString();
         _setError(errorMsg);
       }
     } catch (e) {
