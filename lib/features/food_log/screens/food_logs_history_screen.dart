@@ -36,7 +36,6 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
     );
     final dailyTotals = foodLogProvider.calculateDailyTotals(groupedLogs);
     final groupedEntries = groupedLogs.entries.toList();
-    final logs = foodLogProvider.foodLogs;
 
     return Scaffold(
       appBar: Header(),
@@ -57,7 +56,7 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
                     fit: BoxFit.contain,
                   ),
                 )
-                : logs.isEmpty
+                : groupedLogs.isEmpty
                 ? Column(
                   children: [
                     Center(
@@ -93,7 +92,6 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
                     final date = groupedEntries[index].key;
                     final logsForDate = groupedEntries[index].value;
                     final totals = dailyTotals[date]!;
-                    final log = logs[index];
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
