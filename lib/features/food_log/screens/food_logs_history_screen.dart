@@ -1,12 +1,14 @@
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
 import 'package:calories/features/food_log/widgets/add_food_log_button.dart';
-import 'package:calories/features/food_log/widgets/food_log_card.dart';
+import 'package:calories/features/food_log/widgets/daily_total.dart';
 import 'package:calories/features/nutrition/screens/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+
+import '../widgets/food_log_card.dart';
 
 class FoodLogsHistoryScreen extends StatefulWidget {
   const FoodLogsHistoryScreen({super.key});
@@ -29,6 +31,11 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final foodLogProvider = context.watch<FoodLogProvider>();
+    final groupedLogs = foodLogProvider.groupLogsByDate(
+      foodLogProvider.foodLogs,
+    );
+    final dailyTotals = foodLogProvider.calculateDailyTotals(groupedLogs);
+    final groupedEntries = groupedLogs.entries.toList();
     final logs = foodLogProvider.foodLogs;
 
     return Scaffold(
@@ -81,10 +88,32 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
                   ],
                 )
                 : ListView.builder(
-                  itemCount: logs.length,
+                  itemCount: groupedEntries.length,
                   itemBuilder: (context, index) {
+                    final date = groupedEntries[index].key;
+                    final logsForDate = groupedEntries[index].value;
+                    final totals = dailyTotals[date]!;
                     final log = logs[index];
-                    return FoodLogCard(foodLog: log);
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            date,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+
+                        ...logsForDate.map((log) => FoodLogCard(foodLog: log)),
+
+                        DailyTotal(date: date, totals: totals),
+                      ],
+                    );
                   },
                 ),
       ),

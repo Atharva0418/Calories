@@ -2,6 +2,7 @@ import 'package:calories/features/food_log/models/food_log.dart';
 import 'package:calories/features/food_log/screens/add_foodlog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -15,9 +16,6 @@ class FoodLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String date = DateFormat(
-      'MMM d, yyyy',
-    ).format(foodLog.timeStamp.toLocal());
     final String time = DateFormat('Hm').format(foodLog.timeStamp.toLocal());
 
     return Card(
@@ -148,7 +146,7 @@ class FoodLogCard extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.orangeAccent,
-                    child: Icon(Icons.fastfood_outlined, color: Colors.white),
+                    child: Icon(FontAwesomeIcons.utensils, color: Colors.white),
                   ),
                   SizedBox(width: 10.w),
                   Text(
@@ -156,13 +154,6 @@ class FoodLogCard extends StatelessWidget {
                     style: GoogleFonts.fredoka(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      date,
-                      textAlign: TextAlign.end,
-                      style: GoogleFonts.fredoka(fontWeight: FontWeight.w100),
                     ),
                   ),
                 ],
