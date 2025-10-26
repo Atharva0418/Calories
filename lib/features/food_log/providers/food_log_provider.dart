@@ -154,15 +154,13 @@ class FoodLogProvider with ChangeNotifier {
               },
             );
 
-        if (allLogsResponse.statusCode == 200) {
-          final List<dynamic> allLogs = jsonDecode(allLogsResponse.body);
-          _foodLogs.clear();
-          _foodLogs.addAll(
-            allLogs.map((log) => FoodLog.fromJson(log)).toList(),
-          );
-        }
         return allLogsResponse;
       });
+      if (response.statusCode == 200) {
+        final List<dynamic> allLogs = jsonDecode(response.body);
+        _foodLogs.clear();
+        _foodLogs.addAll(allLogs.map((log) => FoodLog.fromJson(log)).toList());
+      }
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -199,13 +197,13 @@ class FoodLogProvider with ChangeNotifier {
                 );
               },
             );
-        ;
 
-        if (deleteResponse.statusCode == 200) {
-          _foodLogs.remove(foodLog);
-        }
         return deleteResponse;
       });
+
+      if (response.statusCode == 200) {
+        _foodLogs.remove(foodLog);
+      }
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

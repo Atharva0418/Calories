@@ -119,7 +119,7 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
         sugar: double.tryParse(_sugarController.text),
         fat: double.tryParse(_fatController.text),
         energy: double.tryParse(_energyController.text),
-        timeStamp: DateTime.now().toUtc(),
+        timeStamp: widget.existingFoodLog!.timeStamp,
       );
 
       final foodLogProvider = context.read<FoodLogProvider>();
