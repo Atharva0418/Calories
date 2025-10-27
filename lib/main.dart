@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'features/auth/screens/signup_screen.dart';
 import 'features/chat/screens/chat_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
 
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
           routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
               // authProvider.isAuthenticated
-              //     ? const HomeScreen()
+              //     ? const NewHomeScreen()
               //     : const SignupScreen(),
               NewHomeScreen(),
         );

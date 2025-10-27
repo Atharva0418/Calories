@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../screens/add_foodlog_screen.dart';
 
 class LogCard extends StatefulWidget {
   const LogCard({super.key});
@@ -21,7 +24,14 @@ class _LogCardState extends State<LogCard> {
       shadowColor: Colors.black54,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddFoodLogScreen(isEditing: false),
+            ),
+          );
+        },
         onTapDown: (_) => setState(() => isPressed = true),
         onTapUp: (_) => setState(() => isPressed = false),
         onTapCancel: () => setState(() => isPressed = false),
@@ -44,13 +54,29 @@ class _LogCardState extends State<LogCard> {
               ),
               borderRadius: borderRadius,
             ),
-            child: Text(
-              "Log your food",
-              style: GoogleFonts.fredoka(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Add a Bite",
+                  style: GoogleFonts.fredoka(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                Spacer(),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  padding: EdgeInsets.only(right: 25.w, bottom: 20.h),
+                  child: Icon(
+                    FontAwesomeIcons.pencil,
+                    size: 35,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

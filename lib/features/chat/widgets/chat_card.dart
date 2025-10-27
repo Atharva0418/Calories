@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../screens/chat_screen.dart';
 
 class ChatCard extends StatefulWidget {
   const ChatCard({super.key});
@@ -22,7 +25,9 @@ class _ChatCardState extends State<ChatCard> {
       color: Colors.pinkAccent,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.pushNamed(context, ChatScreen.routeName);
+        },
         onTapDown: (_) => setState(() => isPressed = true),
         onTapUp: (_) => setState(() => isPressed = false),
         onTapCancel: () => setState(() => isPressed = false),
@@ -45,13 +50,29 @@ class _ChatCardState extends State<ChatCard> {
               ),
               borderRadius: borderRadius,
             ),
-            child: Text(
-              "Have a chat",
-              style: GoogleFonts.fredoka(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Ask Calories",
+                  style: GoogleFonts.fredoka(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                Spacer(),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  padding: EdgeInsets.only(right: 25.w, bottom: 20.h),
+                  child: Icon(
+                    FontAwesomeIcons.commentDots,
+                    size: 35,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

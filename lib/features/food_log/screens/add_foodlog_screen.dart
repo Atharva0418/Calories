@@ -2,7 +2,6 @@ import 'package:calories/features/food_log/models/food_log.dart';
 import 'package:calories/features/food_log/screens/food_logs_history_screen.dart';
 import 'package:calories/features/food_log/widgets/food_name_input.dart';
 import 'package:calories/features/food_log/widgets/weight_input.dart';
-import 'package:calories/features/nutrition/screens/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -193,7 +192,6 @@ class _AddFoodLogScreenState extends State<AddFoodLogScreen> {
     final foodLogProvider = context.watch<FoodLogProvider>();
 
     return Scaffold(
-      appBar: Header(),
       body: Padding(
         padding: EdgeInsets.all(16),
         child:

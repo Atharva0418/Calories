@@ -1,7 +1,6 @@
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
 import 'package:calories/features/food_log/widgets/add_food_log_button.dart';
 import 'package:calories/features/food_log/widgets/daily_total.dart';
-import 'package:calories/features/nutrition/screens/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +37,6 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
     final groupedEntries = groupedLogs.entries.toList();
 
     return Scaffold(
-      appBar: Header(),
       body: Padding(
         padding: EdgeInsets.all(16),
         child:

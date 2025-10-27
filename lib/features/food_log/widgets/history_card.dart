@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../screens/food_logs_history_screen.dart';
+
 class HistoryCard extends StatefulWidget {
   const HistoryCard({super.key});
 
@@ -21,7 +23,12 @@ class _HistoryCardState extends State<HistoryCard> {
       shadowColor: Colors.black54,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FoodLogsHistoryScreen()),
+          );
+        },
         onTapDown: (_) => setState(() => isPressed = true),
         onTapUp: (_) => setState(() => isPressed = false),
         onTapCancel: () => setState(() => isPressed = false),
@@ -44,13 +51,28 @@ class _HistoryCardState extends State<HistoryCard> {
               ),
               borderRadius: borderRadius,
             ),
-            child: Text(
-              "Snack track",
-              style: GoogleFonts.fredoka(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Snack History",
+                  style: GoogleFonts.fredoka(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  padding: EdgeInsets.only(right: 25.w, bottom: 20.h),
+                  child: Icon(
+                    Icons.history,
+                    size: 45,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

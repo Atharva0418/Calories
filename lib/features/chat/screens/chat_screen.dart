@@ -2,7 +2,6 @@ import 'package:calories/features/chat/models/chat_message.dart';
 import 'package:calories/features/chat/models/message_role.dart';
 import 'package:calories/features/chat/provider/chat_provider.dart';
 import 'package:calories/features/chat/widgets/message_bubble.dart';
-import 'package:calories/features/nutrition/screens/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +46,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     return Scaffold(
-      appBar: Header(),
       body: Column(
         children: [
           Expanded(

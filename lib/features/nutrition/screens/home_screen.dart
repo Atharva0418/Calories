@@ -1,12 +1,12 @@
 import 'package:calories/features/nutrition/screens/views/error_view.dart';
 import 'package:calories/features/nutrition/screens/views/loading_view.dart';
 import 'package:calories/features/nutrition/screens/views/nutrition_view.dart';
-import 'package:calories/features/nutrition/screens/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/screen_state.dart';
 import '../providers/nutrition_provider.dart';
+import '../widgets/header.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,29 +14,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nutritionProvider = context.watch<NutritionProvider>();
-    final state = nutritionProvider.state;
 
-    return Scaffold(
-      appBar: const Header(),
-
-      body: () {
-        switch (state) {
-          case ScreenState.loading:
-            return const LoadingView();
-
-          case ScreenState.error:
-            return ErrorView(
-              message:
-                  nutritionProvider.errorMessage ??
-                  "Something went wrong.Please try again later",
-            );
-
-          case ScreenState.success:
-          case ScreenState.idle:
-          default:
-            return NutritionView();
-        }
-      }(),
-    );
+    return Scaffold(appBar: const Header(), body: NutritionView());
   }
 }
