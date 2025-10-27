@@ -106,6 +106,41 @@ class NewHomeScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        padding: EdgeInsets.zero,
+        elevation: 0,
+        height: 60.h,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () {},
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.home_outlined), Text("Home")],
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.logout_outlined), Text("Logout")],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
