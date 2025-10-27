@@ -9,7 +9,7 @@ class LoadingView extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Lottie.asset(
-          'assets/animations/SearchingFood_colored.json',
+          'assets/animations/SearchingFood_orange.json',
           delegates: LottieDelegates(
             values: [
               ValueDelegate.color(['**'], value: Colors.orangeAccent),

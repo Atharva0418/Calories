@@ -43,18 +43,24 @@ public class UserService {
 
   public boolean authenticateLogin(LoginRequestDTO loginDTO) {
     log.info("Authenticating user with email: {}", loginDTO.getEmail());
-    Optional<User> User = userRepository.findByEmail(loginDTO.getEmail());
-    if (!User.isPresent()) {
+    Optional<User> user = userRepository.findByEmail(loginDTO.getEmail());
+    if (!user.isPresent()) {
       log.warn("Authentication failed: User not found with email {}", loginDTO.getEmail());
       throw new BadCredentialsException("Invalid credentials.");
     }
 
-    if (!passwordEncoder.matches(loginDTO.getPassword(), User.get().getHashedPassword())) {
+    if (!passwordEncoder.matches(loginDTO.getPassword(), user.get().getHashedPassword())) {
       log.warn("Authentication failed: Invalid password for email {}", loginDTO.getEmail());
       throw new BadCredentialsException("Invalid credentials.");
     }
 
     log.info("User authenticated successfully.");
     return true;
+  }
+
+  public String getUsernameByEmail(String email) {
+    Optional<User> user = userRepository.findByEmail(email);
+
+    return user.get().getUsername();
   }
 }

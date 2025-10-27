@@ -74,7 +74,9 @@ dev_dependencies:
 flutter:
   assets:
     - .env
-    - assets/animations/SearchingFood_colored.json
+    - assets/animations/SearchingFood_orange.json
+    - assets/animations/SearchingFood_lightGreen.json
+    - assets/animations/SearchingFood_lightBlue.json
     - assets/animations/Success.json
     - assets/images/dot_grid.png
     - assets/images/calories_bot.gif

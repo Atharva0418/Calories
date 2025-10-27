@@ -15,7 +15,7 @@ class AddFoodLogButton extends StatelessWidget {
               builder: (_) => AddFoodLogScreen(isEditing: false),
             ),
           ),
-      icon: Icon(Icons.restaurant, color: Colors.deepOrange),
+      icon: Icon(Icons.restaurant, color: Colors.lightBlue),
       label: Text(
         "Put it on the menu",
         style: GoogleFonts.fredoka(color: Colors.black),

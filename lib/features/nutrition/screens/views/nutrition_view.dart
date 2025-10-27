@@ -1,6 +1,6 @@
+import 'package:calories/features/nutrition/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/nutrition_provider.dart';
@@ -16,20 +16,25 @@ class NutritionView extends StatelessWidget {
     final provider = context.watch<NutritionProvider>();
     final nutrition = provider.nutritionInfo;
     return Scaffold(
+      appBar: Header(
+        color1: Colors.red.withValues(alpha: 0.8),
+        color2: Colors.yellowAccent,
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 16.h),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ImagePreview(image: provider.imageFile),
 
               SizedBox(height: 20.h),
 
-              if (nutrition != null) NutritionCard(nutrition: nutrition),
+              NutritionCard(nutrition: nutrition!),
 
               SizedBox(height: 20.h),
 
-              if (provider.imageFile != null) const GoBackButton(),
+              const GoBackButton(),
             ],
           ),
         ),

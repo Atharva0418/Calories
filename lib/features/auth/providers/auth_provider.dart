@@ -30,6 +30,10 @@ class AuthProvider with ChangeNotifier {
 
   Map<String, String> get fieldErrors => _fieldErrors;
 
+  String? _username;
+
+  String? get username => _username;
+
   Future<bool> signup(SignupRequest signupRequest) async {
     _isLoading = true;
     _errorMessage = null;
@@ -75,6 +79,7 @@ class AuthProvider with ChangeNotifier {
           key: 'userEmail',
           value: signupRequest.email,
         );
+        _username = signupRequest.username;
         return true;
       } else {
         final data = jsonDecode(signupResponse.body);
@@ -124,6 +129,7 @@ class AuthProvider with ChangeNotifier {
 
       if (loginResponse.statusCode == 200) {
         final data = jsonDecode(loginResponse.body);
+        _username = data['username'];
         await _secureStorage.write(
           key: 'accessToken',
           value: data['accessToken'],

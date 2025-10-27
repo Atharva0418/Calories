@@ -37,7 +37,9 @@ public class UserController {
     if (isRegistered) {
       String accessToken = jwtUtil.generateAccessToken(signupDTO.getEmail());
       String refreshToken = jwtUtil.generateRefreshToken(signupDTO.getEmail());
-      return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken), HttpStatus.CREATED);
+      return new ResponseEntity<>(
+          new TokenResponse(accessToken, refreshToken, signupDTO.getUsername()),
+          HttpStatus.CREATED);
     }
     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -50,7 +52,9 @@ public class UserController {
     if (isAuthenticated) {
       String accessToken = jwtUtil.generateAccessToken(loginDTO.getEmail());
       String refreshToken = jwtUtil.generateRefreshToken(loginDTO.getEmail());
-      return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken), HttpStatus.OK);
+      String username = userService.getUsernameByEmail(loginDTO.getEmail());
+      return new ResponseEntity<>(
+          new TokenResponse(accessToken, refreshToken, username), HttpStatus.OK);
     }
     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
   }
@@ -65,7 +69,7 @@ public class UserController {
       String newRefreshToken = jwtUtil.generateRefreshToken(email);
       log.info("Generated new access token and refresh token for email: {}", email);
       return ResponseEntity.status(HttpStatus.OK)
-          .body(new TokenResponse(newAccessToken, newRefreshToken));
+          .body(new TokenResponse(newAccessToken, newRefreshToken, null));
     }
     log.warn("Invalid refresh token.");
     return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);

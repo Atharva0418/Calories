@@ -64,7 +64,7 @@ class _InputBarState extends State<InputBar> {
                 chatProvider.isTyping ? null : _sendMessage();
               },
               icon: CircleAvatar(
-                backgroundColor: Colors.orangeAccent,
+                backgroundColor: Colors.pinkAccent,
                 radius: 24.r,
                 child: Icon(Icons.send_rounded, color: Colors.white),
               ),

@@ -1,7 +1,6 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
 import 'package:calories/features/chat/provider/chat_provider.dart';
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
-import 'package:calories/features/nutrition/screens/new_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'features/auth/screens/signup_screen.dart';
 import 'features/chat/screens/chat_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
+import 'features/nutrition/screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,10 +76,9 @@ class MyApp extends StatelessWidget {
           ),
           routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
-              // authProvider.isAuthenticated
-              //     ? const NewHomeScreen()
-              //     : const SignupScreen(),
-              NewHomeScreen(),
+              authProvider.isAuthenticated
+                  ? const HomeScreen()
+                  : const SignupScreen(),
         );
       },
     );

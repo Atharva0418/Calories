@@ -1,13 +1,7 @@
 import 'dart:io';
 
-import 'package:calories/features/food_log/widgets/add_food_log_button.dart';
-import 'package:calories/features/food_log/widgets/food_log_history_button.dart';
-import 'package:calories/features/nutrition/widgets/pick_image_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-import '../../chat/widgets/chat_button.dart';
 
 class ImagePreview extends StatelessWidget {
   final File? image;
