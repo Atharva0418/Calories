@@ -76,6 +76,8 @@ flutter:
     - .env
     - assets/animations/SearchingFood_colored.json
     - assets/animations/Success.json
+    - assets/images/dot_grid.png
+    - assets/images/dot_grid_original.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
