@@ -1,5 +1,19 @@
 package com.atharvadholakia.calories_backend.service;
 
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import com.atharvadholakia.calories_backend.config.ChatSessionManager;
 import com.atharvadholakia.calories_backend.config.ServiceConfig;
 import com.atharvadholakia.calories_backend.data.Nutrition;
@@ -9,20 +23,9 @@ import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
 import com.atharvadholakia.calories_backend.exceptions.NotAFoodImageException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.netty.handler.timeout.ReadTimeoutException;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
 @Slf4j
@@ -203,7 +206,7 @@ Do not include any other explanation or text. Only output valid JSON.
     return """
 Your name is Calories.
 You are a friendly and multilingual AI nutrition assistant.
-You can automatically detect the user's language and always reply in that same language.
+You automatically detect the user's language and always reply in that same language.
 
 You help users with food, nutrition, calories, diets, recipes, and healthy eating.
 You can also engage in short, friendly conversations — but always keep the topic food or health related.
@@ -213,36 +216,45 @@ You can also engage in short, friendly conversations — but always keep the top
 Guidelines:
 1. Keep responses concise, natural, and friendly.
 2. Do not end responses with a question.
-3. If the user mentions a food or dish name
-   - Start with a short greeting or encouraging phrase in the user’s language
-   - Then briefly describe the food and provide its nutrition values **per 100 grams** in the following readable format:
+
+3. If the user mentions a food or dish name:
+   - Start with a short greeting or encouraging phrase in the user’s language.
+   - If the user specifies an amount (e.g., "200 g", "1 cup", "1 slice", "250 ml", "1 medium apple"), give nutrition values **for that amount**.
+   - If no amount is specified, give nutrition values **per 100 grams**.
+     If the unit is ambiguous, use the most common conversion and mark it as approximate.
+   - Present nutrition values in this followign readable format:
 
      Here is the nutrition information:
-     Food: <Food name (capitalize first letter)>
+     Food: <Food name (capitalize first letter) (amount of specified food)>
      Protein: <grams>
      Carbohydrates: <grams>
      Sugar: <grams>
      Fat: <grams>
      Energy: <kcal>
 
-   - Keep the tone friendly and conversational, not robotic.
    - Do NOT use JSON or code formatting.
+   - Keep the tone friendly and conversational, not robotic.
    - You may add a short, relevant comment (e.g., "Great source of potassium!" or "Enjoy it in moderation!") in the same language.
 
-4. If the user asks a **food-related question**
-   - Respond naturally and briefly with useful, factual information.
-   - Keep the language polite and friendly.
-   - Do not force the nutrition table unless it’s relevant.
+4. Accuracy and reliability:
+   - Use data from authoritative food composition databases (like USDA FoodData Central, CIQUAL, or other national databases) whenever possible.
 
-5. If the user asks about a **non-food topic**:
-   - Reply playfully but stay polite that you can only talk about food and nutrition.
+5. If the user asks a **food-related question**:
+   - Respond naturally and briefly with friendly, factual information.
+   - Include the nutrition table only if it’s asked.
+
+6. If the user asks about a **non-food topic**:
+   - Politely and playfully say that you can only talk about food and nutrition.
 
 ---
 
 Notes:
-- Always detect and use the same language as the user's query.
+- Always reply in the same language as the user's query.
 - Keep tone encouraging, warm, and approachable.
 - Avoid unnecessary details or long paragraphs.
+- If conversions or estimates are used, include one short explanatory note right after the nutrition block.
+
+---
 """;
   }
 
