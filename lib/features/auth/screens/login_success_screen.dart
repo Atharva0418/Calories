@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../nutrition/screens/home_screen.dart';
+import '../../home_screen.dart';
 
 class LoginSuccessScreen extends StatefulWidget {
   const LoginSuccessScreen({super.key});

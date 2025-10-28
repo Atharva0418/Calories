@@ -3,17 +3,77 @@ import 'package:calories/features/chat/widgets/chat_card.dart';
 import 'package:calories/features/food_log/widgets/history_card.dart';
 import 'package:calories/features/food_log/widgets/log_card.dart';
 import 'package:calories/features/nutrition/providers/nutrition_provider.dart';
-import 'package:calories/features/nutrition/screens/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../auth/screens/login_screen.dart';
-import '../widgets/snap_card.dart';
+import '../main.dart';
+import 'auth/screens/login_screen.dart';
+import 'nutrition/views/loading_view.dart';
+import 'nutrition/widgets/snap_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin, RouteAware {
+  late AnimationController _animationController;
+  late Animation<Offset> _leftSlide;
+  late Animation<Offset> _rightSlide;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    _leftSlide = Tween<Offset>(
+      begin: const Offset(-1.2, 0.0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+
+    _rightSlide = Tween<Offset>(
+      begin: const Offset(1.2, 0.0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void didPopNext() {
+    _animationController.forward(from: 0.0);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +98,15 @@ class HomeScreen extends StatelessWidget {
                           child: Transform.scale(
                             scale: 0.7,
                             alignment: Alignment.topLeft,
-                            child: Image.asset(
-                              'assets/images/dot_grid.png',
-                              color: Colors.indigoAccent,
-                              fit: BoxFit.none,
-                              alignment: Alignment.topLeft,
-                              opacity: AlwaysStoppedAnimation(0.2),
+                            child: SlideTransition(
+                              position: _leftSlide,
+                              child: Image.asset(
+                                'assets/images/dot_grid.png',
+                                color: Colors.indigoAccent,
+                                fit: BoxFit.none,
+                                alignment: Alignment.topLeft,
+                                opacity: AlwaysStoppedAnimation(0.2),
+                              ),
                             ),
                           ),
                         ),
@@ -60,27 +123,31 @@ class HomeScreen extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.white.withValues(alpha: 0.0),
-                                          Colors.blue.withValues(alpha: 0.1),
-                                        ],
+                                  SlideTransition(
+                                    position: _leftSlide,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.white.withValues(alpha: 0.0),
+                                            Colors.blue.withValues(alpha: 0.1),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      "Hey ${authProvider.username},",
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 30.sp,
-                                        fontWeight: FontWeight.w900,
+                                      child: Text(
+                                        "Hey ${authProvider.username},",
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 30.sp,
+                                          fontWeight: FontWeight.w900,
+                                        ),
                                       ),
                                     ),
                                   ),
 
-                                  Flexible(
+                                  SlideTransition(
+                                    position: _rightSlide,
                                     child: Image.asset(
                                       'assets/images/calories_bot.gif',
                                       height: 140.h,
@@ -89,21 +156,30 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
+
                               SizedBox(height: 20.h),
-                              Text(
-                                "Spotted a snack?",
-                                style: GoogleFonts.dynaPuff(
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF9FA8DA), // muted blue
-                                ),
-                              ),
-                              Text(
-                                "Snap it! or Track it!",
-                                style: GoogleFonts.dynaPuff(
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF9FA8DA),
+
+                              SlideTransition(
+                                position: _leftSlide,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Spotted a snack?",
+                                      style: GoogleFonts.dynaPuff(
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF9FA8DA), // muted blue
+                                      ),
+                                    ),
+                                    Text(
+                                      "Snap it! or Track it!",
+                                      style: GoogleFonts.dynaPuff(
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF9FA8DA),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -120,12 +196,32 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [SnapCard(), ChatCard()],
+                            children: [
+                              SlideTransition(
+                                position: _leftSlide,
+                                child: SnapCard(),
+                              ),
+
+                              SlideTransition(
+                                position: _rightSlide,
+                                child: ChatCard(),
+                              ),
+                            ],
                           ),
                           SizedBox(height: 20.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [LogCard(), HistoryCard()],
+                            children: [
+                              SlideTransition(
+                                position: _leftSlide,
+                                child: const LogCard(),
+                              ),
+
+                              SlideTransition(
+                                position: _rightSlide,
+                                child: const HistoryCard(),
+                              ),
+                            ],
                           ),
                         ],
                       ),

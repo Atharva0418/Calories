@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/nutrition_provider.dart';
-import '../../widgets/back_button.dart';
-import '../../widgets/image_preview.dart';
-import '../../widgets/nutrition_card.dart';
+import '../providers/nutrition_provider.dart';
+import '../widgets/back_button.dart';
+import '../widgets/image_preview.dart';
+import '../widgets/nutrition_card.dart';
 
 class NutritionView extends StatelessWidget {
   const NutritionView({super.key});

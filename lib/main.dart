@@ -9,9 +9,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'features/auth/screens/signup_screen.dart';
-import 'features/chat/screens/chat_screen.dart';
+import 'features/home_screen.dart';
 import 'features/nutrition/providers/nutrition_provider.dart';
-import 'features/nutrition/screens/home_screen.dart';
+
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,7 @@ Future<void> main() async {
 
   final authProvider = AuthProvider();
   await authProvider.checkLoggedIn();
+  await authProvider.loadUsername();
 
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
@@ -69,12 +72,12 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'Calories',
+          navigatorObservers: [routeObserver],
           theme: ThemeData(
             useMaterial3: true,
             colorSchemeSeed: Colors.blue,
             textTheme: GoogleFonts.poppinsTextTheme(),
           ),
-          routes: {ChatScreen.routeName: (context) => ChatScreen()},
           home:
               authProvider.isAuthenticated
                   ? const HomeScreen()

@@ -15,11 +15,12 @@ class AddFoodLogButton extends StatelessWidget {
               builder: (_) => AddFoodLogScreen(isEditing: false),
             ),
           ),
-      icon: Icon(Icons.restaurant, color: Colors.lightBlue),
+      icon: Icon(Icons.restaurant, color: Colors.white),
       label: Text(
         "Put it on the menu",
-        style: GoogleFonts.fredoka(color: Colors.black),
+        style: GoogleFonts.fredoka(color: Colors.white),
       ),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
     );
   }
 }

@@ -63,10 +63,23 @@ class _InputBarState extends State<InputBar> {
               onPressed: () {
                 chatProvider.isTyping ? null : _sendMessage();
               },
-              icon: CircleAvatar(
-                backgroundColor: Colors.pinkAccent,
-                radius: 24.r,
-                child: Icon(Icons.send_rounded, color: Colors.white),
+              icon: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.deepPurpleAccent.withValues(alpha: 0.9),
+                      Colors.pinkAccent.withValues(alpha: 1.2),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 24.r,
+                  backgroundColor: Colors.transparent,
+                  child: Icon(Icons.send_rounded, color: Colors.white),
+                ),
               ),
             ),
           ],

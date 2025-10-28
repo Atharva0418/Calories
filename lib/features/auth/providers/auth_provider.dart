@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   final _secureStorage = FlutterSecureStorage();
@@ -33,6 +34,24 @@ class AuthProvider with ChangeNotifier {
   String? _username;
 
   String? get username => _username;
+
+  Future<void> setUsername(String username) async {
+    _username = username;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    notifyListeners();
+  }
+
+  Future<void> loadUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    _username = prefs.getString('username');
+    notifyListeners();
+  }
+
+  Future<void> saveTokens(String accessToken, String refreshToken) async {
+    await _secureStorage.write(key: 'accessToken', value: accessToken);
+    await _secureStorage.write(key: 'refreshToken', value: refreshToken);
+  }
 
   Future<bool> signup(SignupRequest signupRequest) async {
     _isLoading = true;
@@ -67,19 +86,8 @@ class AuthProvider with ChangeNotifier {
 
       if (signupResponse.statusCode == 201) {
         final data = jsonDecode(signupResponse.body);
-        await _secureStorage.write(
-          key: 'accessToken',
-          value: data['accessToken'],
-        );
-        await _secureStorage.write(
-          key: 'refreshToken',
-          value: data['refreshToken'],
-        );
-        await _secureStorage.write(
-          key: 'userEmail',
-          value: signupRequest.email,
-        );
-        _username = signupRequest.username;
+        await saveTokens(data['accessToken'], data['refreshToken']);
+        await setUsername(signupRequest.username);
         return true;
       } else {
         final data = jsonDecode(signupResponse.body);
@@ -129,16 +137,8 @@ class AuthProvider with ChangeNotifier {
 
       if (loginResponse.statusCode == 200) {
         final data = jsonDecode(loginResponse.body);
-        _username = data['username'];
-        await _secureStorage.write(
-          key: 'accessToken',
-          value: data['accessToken'],
-        );
-        await _secureStorage.write(
-          key: 'refreshToken',
-          value: data['refreshToken'],
-        );
-        await _secureStorage.write(key: 'userEmail', value: loginRequest.email);
+        await saveTokens(data['accessToken'], data['refreshToken']);
+        await setUsername(data['username']);
         return true;
       } else {
         final data = jsonDecode(loginResponse.body);
@@ -242,9 +242,10 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await _secureStorage.delete(key: 'accessToken');
-    await _secureStorage.delete(key: 'refreshToken');
-    await _secureStorage.delete(key: 'userEmail');
+    await _secureStorage.deleteAll();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    _username = null;
     _isAuthenticated = false;
     notifyListeners();
   }

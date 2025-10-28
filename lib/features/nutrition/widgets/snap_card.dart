@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:calories/features/nutrition/screens/views/error_view.dart';
-import 'package:calories/features/nutrition/screens/views/nutrition_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/nutrition_provider.dart';
+import '../views/error_view.dart';
+import '../views/nutrition_view.dart';
 
 class SnapCard extends StatefulWidget {
   const SnapCard({super.key});
