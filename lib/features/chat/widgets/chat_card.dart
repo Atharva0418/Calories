@@ -26,7 +26,10 @@ class _ChatCardState extends State<ChatCard> {
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, ChatScreen.routeName);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatScreen()),
+          );
         },
         onTapDown: (_) => setState(() => isPressed = true),
         onTapUp: (_) => setState(() => isPressed = false),

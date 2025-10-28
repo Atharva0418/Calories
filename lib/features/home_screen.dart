@@ -3,6 +3,7 @@ import 'package:calories/features/chat/widgets/chat_card.dart';
 import 'package:calories/features/food_log/widgets/history_card.dart';
 import 'package:calories/features/food_log/widgets/log_card.dart';
 import 'package:calories/features/nutrition/providers/nutrition_provider.dart';
+import 'package:calories/features/nutrition/widgets/fun_fact_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -245,13 +246,10 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    InkWell(
-                      onTap: () {},
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Icon(Icons.home_outlined), Text("Home")],
-                      ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [FunFactButton(), Text("Trivia")],
                     ),
                     InkWell(
                       onTap: () {
