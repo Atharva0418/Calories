@@ -9,21 +9,15 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
 import '../models/nutrition_info.dart';
-import '../models/screen_state.dart';
 
 class NutritionProvider with ChangeNotifier {
   final AuthProvider authProvider;
 
   NutritionProvider({required this.authProvider});
 
-  ScreenState _state = ScreenState.idle;
+  bool _isLoading = false;
 
-  ScreenState? get state => _state;
-
-  void _setScreenState(ScreenState newState) {
-    _state = newState;
-    notifyListeners();
-  }
+  bool get isLoading => _isLoading;
 
   File? _imageFile;
   NutritionInfo? _nutritionInfo;
@@ -41,38 +35,35 @@ class NutritionProvider with ChangeNotifier {
 
   String? get errorMessage => _errorMessage;
 
-  void _setError(String message) {
-    _errorMessage = message;
-    _setScreenState(ScreenState.error);
-  }
-
-  Future<void> uploadImage() async {
-    _setScreenState(ScreenState.loading);
-    if (_imageFile == null) return;
+  Future<bool> uploadImage() async {
+    _isLoading = true;
+    notifyListeners();
+    if (_imageFile == null) return false;
     try {
       final response = await authProvider.authenticatedRequest((
-          accessToken,) async {
+        accessToken,
+      ) async {
         final uri = Uri.parse(
           '${dotenv.env['BASE_URL']}/api/predict-nutrients',
         );
         final request =
-        http.MultipartRequest('POST', uri)
-          ..files.add(
-            await http.MultipartFile.fromPath(
-              'imageFile',
-              _imageFile!.path,
-              filename: basename(_imageFile!.path),
-            ),
-          )
-          ..headers.addAll({
-            'x-api-key': '${dotenv.env['X_API_KEY']}',
-            'Authorization': 'Bearer $accessToken',
-          });
+            http.MultipartRequest('POST', uri)
+              ..files.add(
+                await http.MultipartFile.fromPath(
+                  'imageFile',
+                  _imageFile!.path,
+                  filename: basename(_imageFile!.path),
+                ),
+              )
+              ..headers.addAll({
+                'x-api-key': '${dotenv.env['X_API_KEY']}',
+                'Authorization': 'Bearer $accessToken',
+              });
 
         final streamedResponse = await request.send().timeout(
           const Duration(seconds: 20),
           onTimeout: () {
-            _setError("Request taking too long. Please try again later.");
+            _errorMessage = "Request taking too long. Please try again later.";
             throw TimeoutException("Timed out");
           },
         );
@@ -85,25 +76,18 @@ class NutritionProvider with ChangeNotifier {
 
         _nutritionInfo = NutritionInfo.fromJson(jsonData);
 
-        notifyListeners();
-        _setScreenState(ScreenState.success);
+        return true;
       } else {
-        final errorMsg = json
-            .decode(response.body)
-            .values
-            .first
-            .toString();
-        _setError(errorMsg);
+        _errorMessage = json.decode(response.body).values.first.toString();
       }
+      return false;
     } catch (e) {
+      _errorMessage = "Something went wrong. Please try again later.";
       debugPrint(e.toString());
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-  }
-
-  void reset() {
-    _imageFile = null;
-    _nutritionInfo = null;
-    _setScreenState(ScreenState.idle);
-    notifyListeners();
   }
 }

@@ -18,6 +18,8 @@ class FoodLogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final String time = DateFormat('Hm').format(foodLog.timeStamp.toLocal());
 
+    final themeColor = Colors.lightGreen;
+
     return Card(
       elevation: 4,
       child: InkWell(
@@ -36,9 +38,9 @@ class FoodLogCard extends StatelessWidget {
                       title: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: Colors.orangeAccent,
+                            backgroundColor: themeColor,
                             child: Icon(
-                              Icons.fastfood_outlined,
+                              FontAwesomeIcons.utensils,
                               color: Colors.white,
                             ),
                           ),
@@ -93,7 +95,7 @@ class FoodLogCard extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 20,
-                              backgroundColor: Colors.orangeAccent,
+                              backgroundColor: Colors.lightBlue,
                               child: IconButton(
                                 icon: Icon(
                                   Icons.edit,
@@ -145,7 +147,7 @@ class FoodLogCard extends StatelessWidget {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.orangeAccent,
+                    backgroundColor: themeColor,
                     child: Icon(FontAwesomeIcons.utensils, color: Colors.white),
                   ),
                   SizedBox(width: 10.w),

@@ -49,6 +49,9 @@ dependencies:
   font_awesome_flutter: ^10.9.1
   json_annotation: ^4.9.0
   intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  confetti: ^0.8.0
+  vibration: ^3.1.4
 
 
 
@@ -74,8 +77,12 @@ dev_dependencies:
 flutter:
   assets:
     - .env
-    - assets/animations/SearchingFood_colored.json
+    - assets/animations/SearchingFood_orange.json
+    - assets/animations/SearchingFood_lightGreen.json
+    - assets/animations/SearchingFood_lightBlue.json
     - assets/animations/Success.json
+    - assets/images/dot_grid.png
+    - assets/images/calories_bot.gif
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

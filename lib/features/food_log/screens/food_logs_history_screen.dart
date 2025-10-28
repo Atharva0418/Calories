@@ -1,7 +1,7 @@
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
 import 'package:calories/features/food_log/widgets/add_food_log_button.dart';
 import 'package:calories/features/food_log/widgets/daily_total.dart';
-import 'package:calories/features/nutrition/screens/widgets/header.dart';
+import 'package:calories/features/nutrition/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,17 +38,20 @@ class _FoodLogsHistoryScreenState extends State<FoodLogsHistoryScreen> {
     final groupedEntries = groupedLogs.entries.toList();
 
     return Scaffold(
-      appBar: Header(),
+      appBar: Header(
+        color1: Colors.green.withValues(alpha: 1),
+        color2: Colors.lime.withValues(alpha: 1.2),
+      ),
       body: Padding(
         padding: EdgeInsets.all(16),
         child:
             foodLogProvider.isLoading
                 ? Center(
                   child: Lottie.asset(
-                    'assets/animations/SearchingFood_colored.json',
+                    'assets/animations/SearchingFood_lightGreen.json',
                     delegates: LottieDelegates(
                       values: [
-                        ValueDelegate.color(['**'], value: Colors.orangeAccent),
+                        ValueDelegate.color(['**'], value: Colors.lightGreen),
                       ],
                     ),
                     width: 150,
