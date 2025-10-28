@@ -114,4 +114,11 @@ class ChatProvider extends ChangeNotifier {
     final raw = e.toString();
     return raw.replaceFirst(RegExp(r'^Exception:\s*'), '');
   }
+
+  void clearChat() {
+    _messages.clear();
+    _errorMessage = null;
+    _isTyping = false;
+    notifyListeners();
+  }
 }

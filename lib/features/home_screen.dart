@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../main.dart';
 import 'auth/screens/login_screen.dart';
+import 'chat/provider/chat_provider.dart';
 import 'nutrition/views/loading_view.dart';
 import 'nutrition/widgets/snap_card.dart';
 
@@ -79,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final authProvider = context.read<AuthProvider>();
+    final chatProvider = context.read<ChatProvider>();
     return Consumer<NutritionProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
@@ -269,6 +271,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ElevatedButton(
                                     onPressed: () async {
                                       await authProvider.logout();
+                                      chatProvider.clearChat();
                                       if (!context.mounted) return;
                                       Navigator.of(context).pushAndRemoveUntil(
                                         MaterialPageRoute(

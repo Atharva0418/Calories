@@ -163,7 +163,7 @@ class FoodLogCard extends StatelessWidget {
               SizedBox(height: 10.h),
               Row(
                 children: [
-                  Text("Weight : ${foodLog.weight}g"),
+                  Text("Energy : ${foodLog.energy} kcal"),
                   SizedBox(width: 10.w),
                   Text("Protein : ${foodLog.protein}g"),
                   Expanded(
