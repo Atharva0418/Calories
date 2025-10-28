@@ -48,9 +48,14 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveTokens(String accessToken, String refreshToken) async {
+  Future<void> saveTokens(
+    String accessToken,
+    String refreshToken,
+    String userEmail,
+  ) async {
     await _secureStorage.write(key: 'accessToken', value: accessToken);
     await _secureStorage.write(key: 'refreshToken', value: refreshToken);
+    await _secureStorage.write(key: 'userEmail', value: userEmail);
   }
 
   Future<bool> signup(SignupRequest signupRequest) async {
@@ -86,7 +91,11 @@ class AuthProvider with ChangeNotifier {
 
       if (signupResponse.statusCode == 201) {
         final data = jsonDecode(signupResponse.body);
-        await saveTokens(data['accessToken'], data['refreshToken']);
+        await saveTokens(
+          data['accessToken'],
+          data['refreshToken'],
+          signupRequest.email,
+        );
         await setUsername(signupRequest.username);
         return true;
       } else {
@@ -137,7 +146,11 @@ class AuthProvider with ChangeNotifier {
 
       if (loginResponse.statusCode == 200) {
         final data = jsonDecode(loginResponse.body);
-        await saveTokens(data['accessToken'], data['refreshToken']);
+        await saveTokens(
+          data['accessToken'],
+          data['refreshToken'],
+          loginRequest.email,
+        );
         await setUsername(data['username']);
         return true;
       } else {
