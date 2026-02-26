@@ -6,13 +6,17 @@ import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
 import com.atharvadholakia.calories_backend.data.TokenResponse;
 import com.atharvadholakia.calories_backend.security.JwtUtil;
 import com.atharvadholakia.calories_backend.service.UserService;
+
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -74,4 +78,13 @@ public class UserController {
     log.warn("Invalid refresh token.");
     return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
   }
+
+
+  @GetMapping("/callback")
+  public ResponseEntity<?> googleAuth(@RequestParam String authCode){
+    String serviceResponse = userService.handleGoogleOAuth(authCode);
+
+    return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+  }
+
 }
