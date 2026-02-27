@@ -1,12 +1,16 @@
 package com.atharvadholakia.calories_backend.service;
 
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -61,7 +65,7 @@ public class UserService {
   public boolean authenticateLogin(LoginRequestDTO loginDTO) {
     log.info("Authenticating user with email: {}", loginDTO.getEmail());
     Optional<User> user = userRepository.findByEmail(loginDTO.getEmail());
-    if (!user.isPresent()) {
+    if (user.isEmpty()) {
       log.warn("Authentication failed: User not found with email {}", loginDTO.getEmail());
       throw new BadCredentialsException("Invalid credentials.");
     }
@@ -76,9 +80,9 @@ public class UserService {
   }
 
 
-  public String handleGoogleOAuth(String authCode){
+  public HashMap<String, String> handleGoogleOAuth(String authCode){
     try {
-        
+
       String tokenEndpoint = "https://oauth2.googleapis.com/token";
 
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -89,7 +93,7 @@ public class UserService {
       params.add("redirect_uri", "https://developers.google.com/oauthplayground");
       params.add("grant_type", "authorization_code");
 
-      Map<String, Object> tokenResponse = webClient.post()
+      Map tokenResponse = webClient.post()
       .uri(tokenEndpoint)
       .contentType(MediaType.APPLICATION_FORM_URLENCODED)
       .bodyValue(params)
@@ -103,18 +107,51 @@ public class UserService {
 
       String id_token = (String)tokenResponse.get("id_token");
 
-      return id_token;
+      GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+              .setAudience(Collections.singleton(serviceConfig.getGoogleOAuthClientId()))
+              .build();
+
+      GoogleIdToken idTokenObj = verifier.verify(id_token);
+
+      if(idTokenObj != null){
+        GoogleIdToken.Payload payload = idTokenObj.getPayload();
+        String email = payload.getEmail();
+        String username = (String)payload.get("given_name");
+
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if(user.isEmpty()) {
+          User newUser = new User(username, email, passwordEncoder.encode(UUID.randomUUID().toString()));
+          userRepository.save(newUser);
+
+          HashMap<String, String> registeredUser = new HashMap<>();
+          registeredUser.put("email", newUser.getEmail());
+          registeredUser.put("username", newUser.getUsername());
+
+          log.info("User registered successfully: {}", newUser.getEmail());
+
+          return registeredUser;
+        }else{
+          log.info("User logged in successfully: {}", email);
+          HashMap<String, String> existingUser = new HashMap<>();
+          existingUser.put("email", user.get().getEmail());
+          existingUser.put("username", user.get().getUsername());
+
+          return existingUser;
+        }
+
+      }
+
 
     } catch (Exception e) {
       System.out.println(e);
     }
 
-    return "Not Authenticated";
+    return new HashMap<>();
   }
 
   public String getUsernameByEmail(String email) {
     Optional<User> user = userRepository.findByEmail(email);
-
     return user.get().getUsername();
   }
 }

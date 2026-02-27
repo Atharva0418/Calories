@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/auth")
 @Slf4j
@@ -66,7 +68,7 @@ public class UserController {
   @PostMapping("/refresh-token")
   public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
     String refreshToken = tokenRequest.getRefreshToken();
-    log.info("Received refresh token: {}");
+    log.info("Received refresh token");
     if (jwtUtil.validateToken(refreshToken)) {
       String email = jwtUtil.extractEmailFromToken(refreshToken);
       String newAccessToken = jwtUtil.generateAccessToken(email);
@@ -82,9 +84,18 @@ public class UserController {
 
   @GetMapping("/callback")
   public ResponseEntity<?> googleAuth(@RequestParam String authCode){
-    String serviceResponse = userService.handleGoogleOAuth(authCode);
+    log.info("Calling service to handle google OAuth.");
+    HashMap<String, String> userDetails = userService.handleGoogleOAuth(authCode);
 
-    return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+    if(userDetails != null){
+      String accessToken = jwtUtil.generateAccessToken(userDetails.get("email"));
+      String refreshToken = jwtUtil.generateRefreshToken(userDetails.get("email"));
+      String username = userDetails.get("username");
+
+      return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken, username), HttpStatus.OK);
+    }
+
+    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
   }
 
 }
