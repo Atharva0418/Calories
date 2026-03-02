@@ -1,9 +1,11 @@
 package com.atharvadholakia.calories_backend.controller;
 
-import com.atharvadholakia.calories_backend.data.LoginRequestDTO;
-import com.atharvadholakia.calories_backend.data.RefreshTokenRequest;
-import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
-import com.atharvadholakia.calories_backend.data.TokenResponse;
+import com.atharvadholakia.calories_backend.data.authentication.AuthResponse;
+import com.atharvadholakia.calories_backend.data.authentication.GoogleTokenResponse;
+import com.atharvadholakia.calories_backend.data.authentication.LoginRequestDTO;
+import com.atharvadholakia.calories_backend.data.jwt_token.RefreshTokenRequest;
+import com.atharvadholakia.calories_backend.data.authentication.SignupRequestDTO;
+import com.atharvadholakia.calories_backend.data.jwt_token.TokenResponse;
 import com.atharvadholakia.calories_backend.security.JwtUtil;
 import com.atharvadholakia.calories_backend.service.UserService;
 
@@ -85,17 +87,23 @@ public class UserController {
   @GetMapping("/callback")
   public ResponseEntity<?> googleAuth(@RequestParam String authCode){
     log.info("Calling service to handle google OAuth.");
-    HashMap<String, String> userDetails = userService.handleGoogleOAuth(authCode);
+    AuthResponse userDetails = userService.handleGoogleOAuth(authCode);
 
     if(userDetails != null){
-      String accessToken = jwtUtil.generateAccessToken(userDetails.get("email"));
-      String refreshToken = jwtUtil.generateRefreshToken(userDetails.get("email"));
-      String username = userDetails.get("username");
+      String accessToken = jwtUtil.generateAccessToken(userDetails.email());
+      String refreshToken = jwtUtil.generateRefreshToken(userDetails.email());
+      String username = userDetails.username();
 
       return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken, username), HttpStatus.OK);
     }
 
     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
   }
+
+  @GetMapping("/test")
+  public GoogleTokenResponse test() {
+    return new GoogleTokenResponse("abc", "bcd", "efg" , 231, "kdpaf","dafs");
+  }
+
 
 }

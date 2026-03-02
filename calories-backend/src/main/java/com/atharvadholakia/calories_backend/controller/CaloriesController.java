@@ -1,6 +1,6 @@
 package com.atharvadholakia.calories_backend.controller;
 
-import com.atharvadholakia.calories_backend.data.Nutrition;
+import com.atharvadholakia.calories_backend.data.nutrition.Nutrition;
 import com.atharvadholakia.calories_backend.exceptions.InvalidImageException;
 import com.atharvadholakia.calories_backend.service.CaloriesService;
 import lombok.extern.slf4j.Slf4j;

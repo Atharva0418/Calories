@@ -1,4 +1,4 @@
-package com.atharvadholakia.calories_backend.data;
+package com.atharvadholakia.calories_backend.data.jwt_token;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

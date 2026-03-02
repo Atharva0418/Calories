@@ -1,4 +1,4 @@
-package com.atharvadholakia.calories_backend.data;
+package com.atharvadholakia.calories_backend.data.authentication;
 
 import com.atharvadholakia.calories_backend.data.foodlog.FoodLog;
 import jakarta.persistence.CascadeType;

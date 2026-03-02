@@ -3,6 +3,7 @@ package com.atharvadholakia.calories_backend.service;
 
 import java.util.*;
 
+import com.atharvadholakia.calories_backend.data.authentication.*;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -10,7 +11,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -18,9 +18,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.atharvadholakia.calories_backend.config.ServiceConfig;
-import com.atharvadholakia.calories_backend.data.LoginRequestDTO;
-import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
-import com.atharvadholakia.calories_backend.data.User;
 import com.atharvadholakia.calories_backend.exceptions.EmailAlreadyExistsException;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
 
@@ -80,7 +77,7 @@ public class UserService {
   }
 
 
-  public HashMap<String, String> handleGoogleOAuth(String authCode){
+  public AuthResponse handleGoogleOAuth(String authCode){
     try {
 
       String tokenEndpoint = "https://oauth2.googleapis.com/token";
@@ -93,7 +90,7 @@ public class UserService {
       params.add("redirect_uri", "https://developers.google.com/oauthplayground");
       params.add("grant_type", "authorization_code");
 
-      Map tokenResponse = webClient.post()
+      GoogleTokenResponse tokenResponse = webClient.post()
       .uri(tokenEndpoint)
       .contentType(MediaType.APPLICATION_FORM_URLENCODED)
       .bodyValue(params)
@@ -102,10 +99,10 @@ public class UserService {
                 response.bodyToMono(String.class)
                         .map(body -> new RuntimeException("Google Error: " + body))
         )
-      .bodyToMono(Map.class)
+      .bodyToMono(GoogleTokenResponse.class)
       .block();
 
-      String id_token = (String)tokenResponse.get("id_token");
+      String id_token = tokenResponse.idToken();
 
       GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
               .setAudience(Collections.singleton(serviceConfig.getGoogleOAuthClientId()))
@@ -124,18 +121,14 @@ public class UserService {
           User newUser = new User(username, email, passwordEncoder.encode(UUID.randomUUID().toString()));
           userRepository.save(newUser);
 
-          HashMap<String, String> registeredUser = new HashMap<>();
-          registeredUser.put("email", newUser.getEmail());
-          registeredUser.put("username", newUser.getUsername());
+          AuthResponse registeredUser = new AuthResponse(newUser.getEmail(), newUser.getUsername());
 
           log.info("User registered successfully: {}", newUser.getEmail());
 
           return registeredUser;
         }else{
           log.info("User logged in successfully: {}", email);
-          HashMap<String, String> existingUser = new HashMap<>();
-          existingUser.put("email", user.get().getEmail());
-          existingUser.put("username", user.get().getUsername());
+          AuthResponse existingUser = new AuthResponse(user.get().getEmail(), user.get().getUsername());
 
           return existingUser;
         }
@@ -147,7 +140,7 @@ public class UserService {
       System.out.println(e);
     }
 
-    return new HashMap<>();
+    return new AuthResponse("", " ");
   }
 
   public String getUsernameByEmail(String email) {

@@ -1,6 +1,6 @@
 package com.atharvadholakia.calories_backend.service;
 
-import com.atharvadholakia.calories_backend.data.User;
+import com.atharvadholakia.calories_backend.data.authentication.User;
 import com.atharvadholakia.calories_backend.data.foodlog.FoodLog;
 import com.atharvadholakia.calories_backend.exceptions.ResourceNotFoundException;
 import com.atharvadholakia.calories_backend.repository.FoodLogRepository;

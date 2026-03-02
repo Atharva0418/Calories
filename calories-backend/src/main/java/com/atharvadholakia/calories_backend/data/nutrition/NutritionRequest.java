@@ -1,4 +1,4 @@
-package com.atharvadholakia.calories_backend.data;
+package com.atharvadholakia.calories_backend.data.nutrition;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.atharvadholakia.calories_backend.config;
 
-import com.atharvadholakia.calories_backend.data.NutritionRequest;
+import com.atharvadholakia.calories_backend.data.nutrition.NutritionRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

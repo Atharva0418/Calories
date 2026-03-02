@@ -16,9 +16,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.atharvadholakia.calories_backend.config.ChatSessionManager;
 import com.atharvadholakia.calories_backend.config.ServiceConfig;
-import com.atharvadholakia.calories_backend.data.Nutrition;
-import com.atharvadholakia.calories_backend.data.NutritionRequest;
-import com.atharvadholakia.calories_backend.data.NutritionResponse;
+import com.atharvadholakia.calories_backend.data.nutrition.Nutrition;
+import com.atharvadholakia.calories_backend.data.nutrition.NutritionRequest;
+import com.atharvadholakia.calories_backend.data.nutrition.NutritionResponse;
 import com.atharvadholakia.calories_backend.exceptions.CustomTimeOutException;
 import com.atharvadholakia.calories_backend.exceptions.NotAFoodImageException;
 import com.fasterxml.jackson.core.JsonProcessingException;
