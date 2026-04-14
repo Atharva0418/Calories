@@ -1,17 +1,5 @@
 package com.atharvadholakia.calories_backend.controller;
 
-import com.atharvadholakia.calories_backend.data.authentication.AuthResponse;
-import com.atharvadholakia.calories_backend.data.authentication.GoogleTokenResponse;
-import com.atharvadholakia.calories_backend.data.authentication.LoginRequestDTO;
-import com.atharvadholakia.calories_backend.data.jwt_token.RefreshTokenRequest;
-import com.atharvadholakia.calories_backend.data.authentication.SignupRequestDTO;
-import com.atharvadholakia.calories_backend.data.jwt_token.TokenResponse;
-import com.atharvadholakia.calories_backend.security.JwtUtil;
-import com.atharvadholakia.calories_backend.service.UserService;
-
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +10,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import com.atharvadholakia.calories_backend.data.authentication.AuthResponse;
+import com.atharvadholakia.calories_backend.data.authentication.LoginRequestDTO;
+import com.atharvadholakia.calories_backend.data.authentication.SignupRequestDTO;
+import com.atharvadholakia.calories_backend.data.jwt_token.RefreshTokenRequest;
+import com.atharvadholakia.calories_backend.data.jwt_token.TokenResponse;
+import com.atharvadholakia.calories_backend.security.JwtUtil;
+import com.atharvadholakia.calories_backend.service.UserService;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+ 
 @RestController
 @RequestMapping("/auth")
 @Slf4j
@@ -68,7 +66,7 @@ public class UserController {
   }
 
   @PostMapping("/refresh-token")
-  public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+  public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest tokenRequest) {
     String refreshToken = tokenRequest.getRefreshToken();
     log.info("Received refresh token");
     if (jwtUtil.validateToken(refreshToken)) {
@@ -85,25 +83,15 @@ public class UserController {
 
 
   @GetMapping("/callback")
-  public ResponseEntity<?> googleAuth(@RequestParam String authCode){
+  public ResponseEntity<?> googleAuth(@RequestParam("code") String authCode){
     log.info("Calling service to handle google OAuth.");
     AuthResponse userDetails = userService.handleGoogleOAuth(authCode);
 
-    if(userDetails != null){
-      String accessToken = jwtUtil.generateAccessToken(userDetails.email());
-      String refreshToken = jwtUtil.generateRefreshToken(userDetails.email());
-      String username = userDetails.username();
+    String accessToken = jwtUtil.generateAccessToken(userDetails.email());
+    String refreshToken = jwtUtil.generateRefreshToken(userDetails.email());
+    String username = userDetails.username();
 
-      return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken, username), HttpStatus.OK);
-    }
-
-    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken, username), HttpStatus.OK);
   }
-
-  @GetMapping("/test")
-  public GoogleTokenResponse test() {
-    return new GoogleTokenResponse("abc", "bcd", "efg" , 231, "kdpaf","dafs");
-  }
-
 
 }

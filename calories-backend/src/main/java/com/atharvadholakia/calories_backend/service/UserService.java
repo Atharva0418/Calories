@@ -1,13 +1,10 @@
 package com.atharvadholakia.calories_backend.service;
 
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
 
-import com.atharvadholakia.calories_backend.data.authentication.*;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,8 +15,18 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.atharvadholakia.calories_backend.config.ServiceConfig;
+import com.atharvadholakia.calories_backend.data.authentication.AuthResponse;
+import com.atharvadholakia.calories_backend.data.authentication.GoogleTokenResponse;
+import com.atharvadholakia.calories_backend.data.authentication.LoginRequestDTO;
+import com.atharvadholakia.calories_backend.data.authentication.SignupRequestDTO;
+import com.atharvadholakia.calories_backend.data.authentication.User;
 import com.atharvadholakia.calories_backend.exceptions.EmailAlreadyExistsException;
+import com.atharvadholakia.calories_backend.exceptions.GoogleOAuthException;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,6 +87,10 @@ public class UserService {
   public AuthResponse handleGoogleOAuth(String authCode){
     try {
 
+      if(authCode == null || authCode.isBlank()){
+        throw new GoogleOAuthException("Missing authorization code.");
+      }
+
       String tokenEndpoint = "https://oauth2.googleapis.com/token";
 
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -87,7 +98,7 @@ public class UserService {
       params.add("code", authCode);
       params.add("client_id", serviceConfig.getGoogleOAuthClientId());
       params.add("client_secret", serviceConfig.getGoogleOAuthClientSecret());
-      params.add("redirect_uri", "https://developers.google.com/oauthplayground");
+      params.add("redirect_uri", serviceConfig.getGoogleOAuthRedirectUri());
       params.add("grant_type", "authorization_code");
 
       GoogleTokenResponse tokenResponse = webClient.post()
@@ -97,10 +108,14 @@ public class UserService {
       .retrieve()
       .onStatus(HttpStatusCode::isError, response ->
                 response.bodyToMono(String.class)
-                        .map(body -> new RuntimeException("Google Error: " + body))
+                        .map(GoogleOAuthException::new)
         )
       .bodyToMono(GoogleTokenResponse.class)
       .block();
+
+      if(tokenResponse == null || tokenResponse.idToken() == null || tokenResponse.idToken().isBlank()){
+        throw new GoogleOAuthException("Google did not return a valid token.");
+      }
 
       String id_token = tokenResponse.idToken();
 
@@ -110,37 +125,46 @@ public class UserService {
 
       GoogleIdToken idTokenObj = verifier.verify(id_token);
 
-      if(idTokenObj != null){
-        GoogleIdToken.Payload payload = idTokenObj.getPayload();
-        String email = payload.getEmail();
-        String username = (String)payload.get("given_name");
+      if(idTokenObj == null){
+        throw new GoogleOAuthException("Invalid Google ID Token.");
+      }
+      
+      GoogleIdToken.Payload payload = idTokenObj.getPayload();
+      String email = payload.getEmail();
+      Boolean emailVerified = payload.getEmailVerified();
+      if (emailVerified == null || !emailVerified) {
+          throw new GoogleOAuthException("Email not verified by Google.");
+      }
+      
+      String username = (String)payload.get("given_name");
 
-        Optional<User> user = userRepository.findByEmail(email);
+      Optional<User> existingUser = userRepository.findByEmail(email);
 
-        if(user.isEmpty()) {
-          User newUser = new User(username, email, passwordEncoder.encode(UUID.randomUUID().toString()));
-          userRepository.save(newUser);
-
-          AuthResponse registeredUser = new AuthResponse(newUser.getEmail(), newUser.getUsername());
-
-          log.info("User registered successfully: {}", newUser.getEmail());
-
-          return registeredUser;
-        }else{
-          log.info("User logged in successfully: {}", email);
-          AuthResponse existingUser = new AuthResponse(user.get().getEmail(), user.get().getUsername());
-
-          return existingUser;
-        }
+      if(existingUser.isPresent()) {
+        User user = existingUser.get();
+        log.info("User logged in successfully: {}", email);
+        return new AuthResponse(user.getEmail(), user.getUsername());
 
       }
 
+        User newUser = new User(username, email, passwordEncoder.encode(UUID.randomUUID().toString()));
+        userRepository.save(newUser);
 
-    } catch (Exception e) {
-      System.out.println(e);
+        AuthResponse registeredUser = new AuthResponse(newUser.getEmail(), newUser.getUsername());
+
+        log.info("User registered successfully: {}", newUser.getEmail());
+
+        return registeredUser;
+
+
+    } catch (GoogleOAuthException ex){
+      throw ex;
     }
+    catch (Exception ex) {
+      log.error("Unexpected Google OAuth error", ex);
+      throw new GoogleOAuthException("Google OAuth authentication failed.");
 
-    return new AuthResponse("", " ");
+    }
   }
 
   public String getUsernameByEmail(String email) {

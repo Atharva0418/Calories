@@ -112,9 +112,17 @@ public class GlobalExceptionHandler {
       BadCredentialsException ex) {
     String errorMessage = ex.getMessage();
     HashMap<String, String> response = new HashMap<>();
-    response.put("password", errorMessage);
+    response.put("credentials", errorMessage);
     log.warn(errorMessage);
     return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler(GoogleOAuthException.class)
+  public ResponseEntity<HashMap<String, String>> handleGoogleOAuthException(Exception ex){
+    String errorMessage = ex.getMessage();
+    log.warn(errorMessage);
+    return buildErrorResponse(errorMessage, HttpStatus.UNAUTHORIZED);
+
   }
 
   @ExceptionHandler(Exception.class)

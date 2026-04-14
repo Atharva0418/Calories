@@ -17,6 +17,10 @@ repositories {
 	mavenCentral()
 }
 
+configurations.configureEach {
+exclude group: 'commons-logging', module: 'commons-logging'
+}
+
 dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
