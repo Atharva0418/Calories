@@ -98,7 +98,7 @@ public class UserService {
       params.add("code", authCode);
       params.add("client_id", serviceConfig.getGoogleOAuthClientId());
       params.add("client_secret", serviceConfig.getGoogleOAuthClientSecret());
-      params.add("redirect_uri", serviceConfig.getGoogleOAuthRedirectUri());
+      params.add("redirect_uri", "");
       params.add("grant_type", "authorization_code");
 
       GoogleTokenResponse tokenResponse = webClient.post()

@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../service/GoogleAuthService.dart';
+
 class AuthProvider with ChangeNotifier {
   final _secureStorage = FlutterSecureStorage();
 
@@ -48,14 +50,9 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveTokens(
-    String accessToken,
-    String refreshToken,
-    String userEmail,
-  ) async {
+  Future<void> saveTokens(String accessToken, String refreshToken) async {
     await _secureStorage.write(key: 'accessToken', value: accessToken);
     await _secureStorage.write(key: 'refreshToken', value: refreshToken);
-    await _secureStorage.write(key: 'userEmail', value: userEmail);
   }
 
   Future<bool> signup(SignupRequest signupRequest) async {
@@ -91,11 +88,7 @@ class AuthProvider with ChangeNotifier {
 
       if (signupResponse.statusCode == 201) {
         final data = jsonDecode(signupResponse.body);
-        await saveTokens(
-          data['accessToken'],
-          data['refreshToken'],
-          signupRequest.email,
-        );
+        await saveTokens(data['accessToken'], data['refreshToken']);
         await setUsername(signupRequest.username);
         return true;
       } else {
@@ -146,11 +139,7 @@ class AuthProvider with ChangeNotifier {
 
       if (loginResponse.statusCode == 200) {
         final data = jsonDecode(loginResponse.body);
-        await saveTokens(
-          data['accessToken'],
-          data['refreshToken'],
-          loginRequest.email,
-        );
+        await saveTokens(data['accessToken'], data['refreshToken']);
         await setUsername(data['username']);
         return true;
       } else {
@@ -161,6 +150,42 @@ class AuthProvider with ChangeNotifier {
 
         return false;
       }
+    } catch (e) {
+      _errorMessage = _formatError(e);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> googleSignIn() async {
+    _isLoading = true;
+    _errorMessage = null;
+
+    try {
+      final authCode = await GoogleAuthService.getAuthCode();
+
+      final url = Uri.parse('${dotenv.env['BASE_URL']}/auth/callback');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-type': 'application/json',
+          'x-api-key': '${dotenv.env['X_API_KEY']}',
+        },
+        body: jsonEncode({'authCode': authCode}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        await saveTokens(data['accessToken'], data['refreshToken']);
+        await setUsername(data['username']);
+      } else {
+        return false;
+      }
+
+      return true;
     } catch (e) {
       _errorMessage = _formatError(e);
       return false;

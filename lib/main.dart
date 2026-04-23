@@ -1,4 +1,5 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
+import 'package:calories/features/auth/service/GoogleAuthService.dart';
 import 'package:calories/features/chat/provider/chat_provider.dart';
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,7 @@ Future<void> main() async {
                   FoodLogProvider(authProvider: auth.read<AuthProvider>()),
           update: (_, __, ___) => ___!,
         ),
+        Provider(create: (_) => GoogleAuthService()),
       ],
       child: const MyApp(),
     ),

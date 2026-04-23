@@ -59,6 +59,27 @@ class _LoginFormState extends State<LoginScreen> {
     }
   }
 
+  void _googleSignIn() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final loginProvider = context.read<AuthProvider>();
+    final success = await loginProvider.googleSignIn();
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginSuccessScreen()),
+      );
+    } else {
+      if (loginProvider.errorMessage != null) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(loginProvider.errorMessage!)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Color themeColor = Colors.orangeAccent;
@@ -121,6 +142,24 @@ class _LoginFormState extends State<LoginScreen> {
                       ),
 
                   SizedBox(height: 30.h),
+
+                  SizedBox(
+                    height: 60.h,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _googleSignIn();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text(
+                        "Log in with Google",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

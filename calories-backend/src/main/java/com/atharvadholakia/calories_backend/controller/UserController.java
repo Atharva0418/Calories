@@ -1,12 +1,12 @@
 package com.atharvadholakia.calories_backend.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -82,10 +82,11 @@ public class UserController {
   }
 
 
-  @GetMapping("/callback")
-  public ResponseEntity<?> googleAuth(@RequestParam("code") String authCode){
+  @PostMapping("/callback")
+  public ResponseEntity<?> googleAuth(@RequestBody Map<String, String> body){
     log.info("Calling service to handle google OAuth.");
-    AuthResponse userDetails = userService.handleGoogleOAuth(authCode);
+    log.info("Auth code received: {}", body.get("authCode"));
+    AuthResponse userDetails = userService.handleGoogleOAuth(body.get("authCode"));
 
     String accessToken = jwtUtil.generateAccessToken(userDetails.email());
     String refreshToken = jwtUtil.generateRefreshToken(userDetails.email());
