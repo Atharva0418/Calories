@@ -21,6 +21,9 @@ public class ServiceConfig {
   @Value("${GOOGLE_OAUTH_REDIRECT_URI}")
   private String google_oauth_redirectUri;
 
+  @Value("${GOOGLE_OAUTH_TOKEN_ENDPOINT}")
+  private String google_oauth_token_endpoint;
+
   public String getApiKey() {
     return apiKey;
   }
@@ -39,5 +42,9 @@ public class ServiceConfig {
 
   public String getGoogleOAuthRedirectUri(){
     return google_oauth_redirectUri;
+  }
+
+  public String getGoogleOauthTokenEndpoint(){
+    return google_oauth_token_endpoint;
   }
 }

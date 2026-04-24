@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthService {
-  static const String _androidClientId =
-      "596931131874-0aihfcd86lk9eaoa40odkr3ips9i0n0m.apps.googleusercontent.com";
+  static final String _androidClientId =
+      "${dotenv.env['GOOGLE_OAUTH_ANDROID_CLIENT_ID']}";
 
-  static const String _webClientId =
-      "596931131874-bofsd9pgggjcmsu1pmco1cbp6s7r5mql.apps.googleusercontent.com";
+  static final String _webClientId =
+      "${dotenv.env['GOOGLE_OAUTH_WEB_CLIENT_ID']}";
 
   static const List<String> _scopes = ['openid', 'email', 'profile'];
 

@@ -6,6 +6,7 @@ import 'package:calories/features/auth/models/signup_request.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +38,8 @@ class AuthProvider with ChangeNotifier {
 
   String? get username => _username;
 
+  final baseUrl = "${dotenv.env['BASE_URL']}";
+
   Future<void> setUsername(String username) async {
     _username = username;
     final prefs = await SharedPreferences.getInstance();
@@ -62,7 +65,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final url = Uri.parse('${dotenv.env['BASE_URL']}/auth/signup');
+      checkBaseUrl();
+      final url = Uri.parse('$baseUrl/auth/signup');
 
       final signupResponse = await http
           .post(
@@ -114,7 +118,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final url = Uri.parse('${dotenv.env['BASE_URL']}/auth/login');
+      checkBaseUrl();
+      final url = Uri.parse('$baseUrl/auth/login');
 
       final loginResponse = await http
           .post(
@@ -166,12 +171,13 @@ class AuthProvider with ChangeNotifier {
     try {
       final authCode = await GoogleAuthService.getAuthCode();
 
-      final url = Uri.parse('${dotenv.env['BASE_URL']}/auth/callback');
+      checkBaseUrl();
+      final url = Uri.parse('$baseUrl/auth/callback');
 
       final response = await http.post(
         url,
         headers: {
-          'Content-type': 'application/json',
+          'Content-Type': 'application/json',
           'x-api-key': '${dotenv.env['X_API_KEY']}',
         },
         body: jsonEncode({'authCode': authCode}),
@@ -182,12 +188,23 @@ class AuthProvider with ChangeNotifier {
         await saveTokens(data['accessToken'], data['refreshToken']);
         await setUsername(data['username']);
       } else {
+        _errorMessage = "Sign in failed. Please try again.";
         return false;
       }
 
       return true;
-    } catch (e) {
-      _errorMessage = _formatError(e);
+    } on GoogleSignInException catch (e, stackTrace) {
+      debugPrint("GoogleSignInException: $e");
+      debugPrint("StackTrace: $stackTrace");
+      _errorMessage =
+          e.code == GoogleSignInExceptionCode.canceled
+              ? "Sign in cancelled."
+              : "Sign in failed. Please try again.";
+      return false;
+    } catch (e, stackTrace) {
+      debugPrint("Unexpected error: $e");
+      debugPrint("StackTrace: $stackTrace");
+      _errorMessage = "Something went wrong. Please try again.";
       return false;
     } finally {
       _isLoading = false;
@@ -204,7 +221,8 @@ class AuthProvider with ChangeNotifier {
     if (refreshToken == null) return false;
 
     try {
-      final url = Uri.parse("${dotenv.env['BASE_URL']}/auth/refresh-token");
+      checkBaseUrl();
+      final url = Uri.parse("$baseUrl/auth/refresh-token");
 
       final refreshResponse = await http.post(
         url,
@@ -281,6 +299,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout() async {
     await _secureStorage.deleteAll();
+    await GoogleAuthService.signOut();
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
     _username = null;
@@ -291,5 +310,11 @@ class AuthProvider with ChangeNotifier {
   String _formatError(Object e) {
     final raw = e.toString();
     return raw.replaceFirst(RegExp(r'^Exception:\s*'), '');
+  }
+
+  void checkBaseUrl() {
+    if (baseUrl.isEmpty) {
+      throw Exception("BASE_URL is empty");
+    }
   }
 }

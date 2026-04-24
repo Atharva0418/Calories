@@ -83,7 +83,7 @@ public class UserController {
 
 
   @PostMapping("/callback")
-  public ResponseEntity<?> googleAuth(@RequestBody Map<String, String> body){
+  public ResponseEntity<TokenResponse> googleAuth(@RequestBody Map<String, String> body){
     log.info("Calling service to handle google OAuth.");
     log.info("Auth code received: {}", body.get("authCode"));
     AuthResponse userDetails = userService.handleGoogleOAuth(body.get("authCode"));

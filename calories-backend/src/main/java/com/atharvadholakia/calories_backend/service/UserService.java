@@ -42,11 +42,14 @@ public class UserService {
 
   private final WebClient webClient;
 
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ServiceConfig serviceConfig, WebClient webClient) {
+  private final GoogleIdTokenVerifier googleIdTokenVerifier;
+
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ServiceConfig serviceConfig, WebClient webClient, GoogleIdTokenVerifier googleIdTokenVerifier) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.serviceConfig = serviceConfig;
     this.webClient = webClient;
+    this.googleIdTokenVerifier = googleIdTokenVerifier;
   }
 
   public boolean registerUser(SignupRequestDTO signupDTO) {
@@ -91,7 +94,7 @@ public class UserService {
         throw new GoogleOAuthException("Missing authorization code.");
       }
 
-      String tokenEndpoint = "https://oauth2.googleapis.com/token";
+      String tokenEndpoint = serviceConfig.getGoogleOauthTokenEndpoint();
 
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
@@ -119,11 +122,7 @@ public class UserService {
 
       String id_token = tokenResponse.idToken();
 
-      GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-              .setAudience(Collections.singleton(serviceConfig.getGoogleOAuthClientId()))
-              .build();
-
-      GoogleIdToken idTokenObj = verifier.verify(id_token);
+      GoogleIdToken idTokenObj = googleIdTokenVerifier.verify(id_token);
 
       if(idTokenObj == null){
         throw new GoogleOAuthException("Invalid Google ID Token.");
