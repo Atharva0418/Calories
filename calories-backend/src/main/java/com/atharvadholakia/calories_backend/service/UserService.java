@@ -1,7 +1,6 @@
 package com.atharvadholakia.calories_backend.service;
 
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,8 +24,6 @@ import com.atharvadholakia.calories_backend.exceptions.GoogleOAuthException;
 import com.atharvadholakia.calories_backend.repository.UserRepository;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -142,14 +139,14 @@ public class UserService {
       if(existingUser.isPresent()) {
         User user = existingUser.get();
         log.info("User logged in successfully: {}", email);
-        return new AuthResponse(user.getEmail(), user.getUsername());
+        return new AuthResponse(user.getEmail(), user.getUsername(), false);
 
       }
 
         User newUser = new User(username, email, passwordEncoder.encode(UUID.randomUUID().toString()));
         userRepository.save(newUser);
 
-        AuthResponse registeredUser = new AuthResponse(newUser.getEmail(), newUser.getUsername());
+        AuthResponse registeredUser = new AuthResponse(newUser.getEmail(), newUser.getUsername(), true);
 
         log.info("User registered successfully: {}", newUser.getEmail());
 

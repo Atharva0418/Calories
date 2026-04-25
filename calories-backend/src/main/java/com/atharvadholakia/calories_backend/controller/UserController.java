@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atharvadholakia.calories_backend.data.authentication.AuthResponse;
+import com.atharvadholakia.calories_backend.data.authentication.GoogleAuthResponse;
 import com.atharvadholakia.calories_backend.data.authentication.LoginRequestDTO;
 import com.atharvadholakia.calories_backend.data.authentication.SignupRequestDTO;
 import com.atharvadholakia.calories_backend.data.jwt_token.RefreshTokenRequest;
@@ -83,16 +84,15 @@ public class UserController {
 
 
   @PostMapping("/callback")
-  public ResponseEntity<TokenResponse> googleAuth(@RequestBody Map<String, String> body){
+  public ResponseEntity<GoogleAuthResponse> googleAuth(@RequestBody Map<String, String> body){
     log.info("Calling service to handle google OAuth.");
     log.info("Auth code received: {}", body.get("authCode"));
     AuthResponse userDetails = userService.handleGoogleOAuth(body.get("authCode"));
 
     String accessToken = jwtUtil.generateAccessToken(userDetails.email());
     String refreshToken = jwtUtil.generateRefreshToken(userDetails.email());
-    String username = userDetails.username();
 
-    return new ResponseEntity<>(new TokenResponse(accessToken, refreshToken, username), HttpStatus.OK);
+    return new ResponseEntity<>(new GoogleAuthResponse(accessToken, refreshToken, userDetails.username(),userDetails.email(), userDetails.isNewUser()), HttpStatus.OK);
   }
 
 }

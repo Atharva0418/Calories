@@ -1,5 +1,5 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
-import 'package:calories/features/auth/service/GoogleAuthService.dart';
+import 'package:calories/features/auth/service/google_auth_service.dart';
 import 'package:calories/features/chat/provider/chat_provider.dart';
 import 'package:calories/features/food_log/providers/food_log_provider.dart';
 import 'package:flutter/material.dart';

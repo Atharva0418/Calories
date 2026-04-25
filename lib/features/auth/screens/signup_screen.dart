@@ -11,6 +11,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../models/signup_request.dart';
+import '../widgets/google_sign_in_button.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -77,20 +78,17 @@ class _SignupFormState extends State<SignupScreen> {
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 200.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sign up",
-                        style: GoogleFonts.fredoka(
-                          fontSize: 40.sp,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
+
+                  Text(
+                    "Sign up",
+                    style: GoogleFonts.fredoka(
+                      fontSize: 40.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
 
                   SizedBox(height: 20.h),
@@ -134,6 +132,19 @@ class _SignupFormState extends State<SignupScreen> {
                         ),
                       ),
                   SizedBox(height: 30.h),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 60.h,
+                        width: 250.w,
+                        child: GoogleSignInButton(),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 20.h),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

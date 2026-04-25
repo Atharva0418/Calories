@@ -1,7 +1,7 @@
 package com.atharvadholakia.calories_backend.exceptions;
 
 import java.util.HashMap;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
@@ -112,7 +114,7 @@ public class GlobalExceptionHandler {
       BadCredentialsException ex) {
     String errorMessage = ex.getMessage();
     HashMap<String, String> response = new HashMap<>();
-    response.put("credentials", errorMessage);
+    response.put("password", errorMessage);
     log.warn(errorMessage);
     return new ResponseEntity<>(response, HttpStatus.CONFLICT);
   }
