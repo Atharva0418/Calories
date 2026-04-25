@@ -1,4 +1,4 @@
-package com.atharvadholakia.calories_backend.data;
+package com.atharvadholakia.calories_backend.data.authentication;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

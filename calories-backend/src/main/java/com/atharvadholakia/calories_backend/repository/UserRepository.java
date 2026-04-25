@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.atharvadholakia.calories_backend.data.User;
+import com.atharvadholakia.calories_backend.data.authentication.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 

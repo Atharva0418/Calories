@@ -1,13 +1,7 @@
 package com.atharvadholakia.calories_backend.controller;
 
-import com.atharvadholakia.calories_backend.data.LoginRequestDTO;
-import com.atharvadholakia.calories_backend.data.RefreshTokenRequest;
-import com.atharvadholakia.calories_backend.data.SignupRequestDTO;
-import com.atharvadholakia.calories_backend.data.TokenResponse;
-import com.atharvadholakia.calories_backend.security.JwtUtil;
-import com.atharvadholakia.calories_backend.service.UserService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +10,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.atharvadholakia.calories_backend.data.authentication.AuthResponse;
+import com.atharvadholakia.calories_backend.data.authentication.GoogleAuthResponse;
+import com.atharvadholakia.calories_backend.data.authentication.LoginRequestDTO;
+import com.atharvadholakia.calories_backend.data.authentication.SignupRequestDTO;
+import com.atharvadholakia.calories_backend.data.jwt_token.RefreshTokenRequest;
+import com.atharvadholakia.calories_backend.data.jwt_token.TokenResponse;
+import com.atharvadholakia.calories_backend.security.JwtUtil;
+import com.atharvadholakia.calories_backend.service.UserService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+ 
 @RestController
 @RequestMapping("/auth")
 @Slf4j
@@ -60,9 +67,9 @@ public class UserController {
   }
 
   @PostMapping("/refresh-token")
-  public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+  public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest tokenRequest) {
     String refreshToken = tokenRequest.getRefreshToken();
-    log.info("Received refresh token: {}");
+    log.info("Received refresh token");
     if (jwtUtil.validateToken(refreshToken)) {
       String email = jwtUtil.extractEmailFromToken(refreshToken);
       String newAccessToken = jwtUtil.generateAccessToken(email);
@@ -74,4 +81,18 @@ public class UserController {
     log.warn("Invalid refresh token.");
     return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
   }
+
+
+  @PostMapping("/callback")
+  public ResponseEntity<GoogleAuthResponse> googleAuth(@RequestBody Map<String, String> body){
+    log.info("Calling service to handle google OAuth.");
+    log.info("Auth code received: {}", body.get("authCode"));
+    AuthResponse userDetails = userService.handleGoogleOAuth(body.get("authCode"));
+
+    String accessToken = jwtUtil.generateAccessToken(userDetails.email());
+    String refreshToken = jwtUtil.generateRefreshToken(userDetails.email());
+
+    return new ResponseEntity<>(new GoogleAuthResponse(accessToken, refreshToken, userDetails.username(),userDetails.email(), userDetails.isNewUser()), HttpStatus.OK);
+  }
+
 }

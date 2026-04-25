@@ -1,7 +1,11 @@
 package com.atharvadholakia.calories_backend.config;
 
 import com.atharvadholakia.calories_backend.security.JwtAuthFilter;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import java.time.Duration;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,5 +57,12 @@ public class AppConfig {
     int iterations = 3;
     int memory = 65536; // 64 MB
     return new Argon2PasswordEncoder(saltLength, hashLength, parallelism, memory, iterations);
+  }
+
+  @Bean
+  public GoogleIdTokenVerifier googleIdTokenVerifier(ServiceConfig serviceConfig) {
+    return new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+    .setAudience(Collections.singleton(serviceConfig.getGoogleOAuthClientId()))
+    .build();
   }
 }

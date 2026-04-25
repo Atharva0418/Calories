@@ -1,4 +1,4 @@
-package com.atharvadholakia.calories_backend.data;
+package com.atharvadholakia.calories_backend.data.jwt_token;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

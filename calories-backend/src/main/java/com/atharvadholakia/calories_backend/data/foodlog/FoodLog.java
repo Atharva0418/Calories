@@ -1,6 +1,6 @@
 package com.atharvadholakia.calories_backend.data.foodlog;
 
-import com.atharvadholakia.calories_backend.data.User;
+import com.atharvadholakia.calories_backend.data.authentication.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

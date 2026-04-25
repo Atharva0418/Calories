@@ -1,6 +1,7 @@
 import 'package:calories/features/auth/providers/auth_provider.dart';
 import 'package:calories/features/auth/screens/login_success_screen.dart';
 import 'package:calories/features/auth/screens/signup_screen.dart';
+import 'package:calories/features/auth/widgets/google_sign_in_button.dart';
 import 'package:calories/features/auth/widgets/email_input.dart';
 import 'package:calories/features/auth/widgets/password_input.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,27 @@ class _LoginFormState extends State<LoginScreen> {
     final loginProvider = context.read<AuthProvider>();
     final messenger = ScaffoldMessenger.of(context);
     final success = await loginProvider.login(loginRequest);
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginSuccessScreen()),
+      );
+    } else {
+      if (loginProvider.errorMessage != null) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(loginProvider.errorMessage!)),
+        );
+      }
+    }
+  }
+
+  void _googleSignIn() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final loginProvider = context.read<AuthProvider>();
+    final success = await loginProvider.googleSignIn();
 
     if (!mounted) return;
 
@@ -121,6 +143,19 @@ class _LoginFormState extends State<LoginScreen> {
                       ),
 
                   SizedBox(height: 30.h),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 60.h,
+                        width: 250.w,
+                        child: GoogleSignInButton(),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 20.h),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
