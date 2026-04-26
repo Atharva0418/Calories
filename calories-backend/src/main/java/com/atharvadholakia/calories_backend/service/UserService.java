@@ -132,7 +132,8 @@ public class UserService {
           throw new GoogleOAuthException("Email not verified by Google.");
       }
       
-      String username = Optional.ofNullable((String) payload.get("given_name")).orElse(email.split("@")[0]);
+      String username = Optional.ofNullable((String) payload.get("given_name"))
+      .orElse(email.split("@")[0].substring(0,9));
 
       Optional<User> existingUser = userRepository.findByEmail(email);
 

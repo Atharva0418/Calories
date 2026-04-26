@@ -26,6 +26,10 @@ class AuthProvider with ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
+  bool _isGoogleOAuthLoading = false;
+
+  bool get isGoogleOAuthLoading => _isGoogleOAuthLoading;
+
   String? _errorMessage;
 
   String? get errorMessage => _errorMessage;
@@ -181,8 +185,9 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> googleSignIn() async {
-    _isLoading = true;
+    _isGoogleOAuthLoading = true;
     _errorMessage = null;
+    notifyListeners();
 
     try {
       final authCode = await GoogleAuthService.getAuthCode();
@@ -229,7 +234,7 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = "Something went wrong. Please try again.";
       return false;
     } finally {
-      _isLoading = false;
+      _isGoogleOAuthLoading = false;
       notifyListeners();
     }
   }

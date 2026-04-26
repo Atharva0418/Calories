@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class GoogleSignInButton extends StatelessWidget {
@@ -24,6 +24,7 @@ class GoogleSignInButton extends StatelessWidget {
         );
       } else {
         if (context.mounted) {
+          debugPrint("Navigating to LoginScreen.");
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => LoginSuccessScreen()),
@@ -41,25 +42,39 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () {
-        _googleSignIn(context);
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SvgPicture.asset(
-            'assets/images/google_logo.svg',
-            width: 25.w,
-            height: 25.h,
+    final themeColor = Colors.orangeAccent;
+    final authProvider = context.read<AuthProvider>();
+    return authProvider.isGoogleOAuthLoading
+        ? Center(
+          child: Lottie.asset(
+            'assets/animations/SearchingFood_orange.json',
+            delegates: LottieDelegates(
+              values: [
+                ValueDelegate.color(['**'], value: themeColor),
+              ],
+            ),
+            height: 80.h,
           ),
+        )
+        : OutlinedButton(
+          onPressed: () {
+            _googleSignIn(context);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SvgPicture.asset(
+                'assets/images/google_logo.svg',
+                width: 25.w,
+                height: 25.h,
+              ),
 
-          Text(
-            "Sign in with Google.",
-            style: TextStyle(color: Colors.black, fontSize: 17),
+              Text(
+                "Sign in with Google.",
+                style: TextStyle(color: Colors.black, fontSize: 17),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
   }
 }
